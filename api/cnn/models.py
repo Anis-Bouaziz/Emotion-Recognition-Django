@@ -1,17 +1,16 @@
 import cv2
 import tensorflow as tf
 import numpy as np
-from tensorflow.keras.models import load_model
+
 from django.http import JsonResponse
-from mtcnn import MTCNN
-detector = MTCNN()
-emotion_classifier = load_model("api/cnn/video.h5", compile=False)
+
+
 
 
 EMOTIONS = ["Angry", "Disgust", "Fear", "Happy", "Sad", "Surprise", "Neutral"]#fer
 
 
-def detect_faces(img):
+def detect_face(img,detector):
 
     gray_fr = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2GRAY)
     
@@ -39,7 +38,7 @@ def detect_faces(img):
     return JsonResponse(result, safe=False)
 
 
-def predict_emotion(img):
+def predict_emotion(img,detector,emotion_classifier):
     gray_fr = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2GRAY)
     result = []
     faces = detector.detect_faces(img)
