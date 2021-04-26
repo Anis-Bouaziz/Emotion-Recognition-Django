@@ -5,3 +5,4 @@ django-heroku==0.3.1
 mtcnn==0.1.0
 tensorflow-cpu
 opencv-python-headless
+psybopg2==2.5.4
