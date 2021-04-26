@@ -15,7 +15,8 @@ from django.template.defaultfilters import filesizeformat
 from django.utils.translation import ugettext_lazy as _
 from django import forms
 font = cv2.FONT_HERSHEY_SIMPLEX
-
+detector = MTCNN()
+emotion_classifier = load_model("api/cnn/video.h5", compile=False)
 
 
 
@@ -40,7 +41,7 @@ def predict(request):
     
     img = cv2.imdecode(np.fromstring(uploaded_file.read(),
                                     np.uint8), cv2.IMREAD_COLOR)
-    res=predict_emotion(img)
+    res=predict_emotion(img,detector,emotion_classifier)
     faces = json.loads(res.content)
     for face in faces:
         
@@ -61,7 +62,7 @@ def predict(request):
 
 
 @csrf_exempt
-def faces(request):
+def faces(request,detector):
     if len(request.FILES)==0:
         return HttpResponse(" Please Choose a file",status=404)
     uploaded_file = request.FILES['file']
@@ -77,22 +78,22 @@ def faces(request):
                                      np.uint8), cv2.IMREAD_COLOR)
     
     res = detect_faces(img)
-    # faces = json.loads(res.content)
-    # for face in faces:
-    #     x, y, w, h = face['box'].values()
-    #     cv2.rectangle(img, (x, y), (x+w, y+h), (0, 0, 255), 2)
-    #     for t in face['landmarks'].values():
+    faces = json.loads(res.content)
+    for face in faces:
+        x, y, w, h = face['box'].values()
+        cv2.rectangle(img, (x, y), (x+w, y+h), (0, 0, 255), 2)
+        for t in face['landmarks'].values():
 
-    #         cv2.circle(img, tuple(t), 3, (0, 0, 255), -1)
-    # img = image_resize(img, width=600)
-    # _, jpeg = cv2.imencode('.jpg', img)
-    # img = base64.encodebytes(jpeg.tobytes())
+            cv2.circle(img, tuple(t), 3, (0, 0, 255), -1)
+    img = image_resize(img, width=600)
+    _, jpeg = cv2.imencode('.jpg', img)
+    img = base64.encodebytes(jpeg.tobytes())
     
-    # context = {'image': img.decode('utf-8'), 'json': faces,'total':len(faces)}
-    # del img 
+    context = {'image': img.decode('utf-8'), 'json': faces,'total':len(faces)}
+    del img 
     
-    # del uploaded_file
-    # del faces
+    del uploaded_file
+    del faces
     context={}
     return JsonResponse(context, safe=False)
 
@@ -135,7 +136,7 @@ def video_feed(request):
     uploaded_file = request.FILES['file']
     img = cv2.imdecode(np.fromstring(uploaded_file.read(),
                                      np.uint8), cv2.IMREAD_UNCHANGED)
-    res= predict_emotion(img)                           
+    res= predict_emotion(img,detector,emotion_classifier)                           
     faces = json.loads(res.content)                                 
     context = {'json': faces,'total':len(faces)}
     del img 
