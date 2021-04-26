@@ -80,22 +80,22 @@ def faces(request):
                                      np.uint8), cv2.IMREAD_COLOR)
     
     res = detect_face(img,detector)
-    faces = json.loads(res.content)
-    for face in faces:
-        x, y, w, h = face['box'].values()
-        cv2.rectangle(img, (x, y), (x+w, y+h), (0, 0, 255), 2)
-        for t in face['landmarks'].values():
+    # faces = json.loads(res.content)
+    # for face in faces:
+    #     x, y, w, h = face['box'].values()
+    #     cv2.rectangle(img, (x, y), (x+w, y+h), (0, 0, 255), 2)
+    #     for t in face['landmarks'].values():
 
-            cv2.circle(img, tuple(t), 3, (0, 0, 255), -1)
-    img = image_resize(img, width=600)
-    _, jpeg = cv2.imencode('.jpg', img)
-    img = base64.encodebytes(jpeg.tobytes())
+    #         cv2.circle(img, tuple(t), 3, (0, 0, 255), -1)
+    # img = image_resize(img, width=600)
+    # _, jpeg = cv2.imencode('.jpg', img)
+    # img = base64.encodebytes(jpeg.tobytes())
     
-    context = {'image': img.decode('utf-8'), 'json': faces,'total':len(faces)}
-    del img 
+    # context = {'image': img.decode('utf-8'), 'json': faces,'total':len(faces)}
+    # del img 
     
-    del uploaded_file
-    del faces
+    # del uploaded_file
+    # del faces
     context={}
     return JsonResponse(context, safe=False)
 

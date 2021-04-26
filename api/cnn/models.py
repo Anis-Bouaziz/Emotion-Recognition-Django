@@ -32,10 +32,10 @@ def detect_face(img,detector):
     #                 })
     #             except Exception as e:
     #                 print(str(e))
-    del faces
+    # del faces
     
     
-    return JsonResponse(result, safe=False)
+    # return JsonResponse(result, safe=False)
 
 
 def predict_emotion(img,detector,emotion_classifier):
