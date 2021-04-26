@@ -17,7 +17,6 @@ def detect_faces(img):
     gray_fr = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2GRAY)
     
     faces = detector.detect_faces(img)
-    print(faces)
     result = []
     if faces:
         for face in faces:
