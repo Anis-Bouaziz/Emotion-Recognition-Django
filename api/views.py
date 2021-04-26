@@ -79,7 +79,7 @@ def faces(request,detector):
     img = cv2.imdecode(np.fromstring(uploaded_file.read(),
                                      np.uint8), cv2.IMREAD_COLOR)
     
-    res = detect_face(img)
+    res = detect_face(img,detector)
     faces = json.loads(res.content)
     for face in faces:
         x, y, w, h = face['box'].values()

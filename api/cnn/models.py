@@ -12,7 +12,7 @@ EMOTIONS = ["Angry", "Disgust", "Fear", "Happy", "Sad", "Surprise", "Neutral"]#f
 
 def detect_face(img,detector):
 
-    gray_fr = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2GRAY)
+    
     
     faces = detector.detect_faces(img)
     result = []
@@ -33,7 +33,7 @@ def detect_face(img,detector):
                 except Exception as e:
                     print(str(e))
     del faces
-    del gray_fr
+    
     
     return JsonResponse(result, safe=False)
 
