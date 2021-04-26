@@ -65,7 +65,7 @@ def faces(request):
     if len(request.FILES)==0:
         return HttpResponse(" Please Choose a file",status=404)
     uploaded_file = request.FILES['file']
-    uploaded_file = request.FILES['file']
+    
     content_type = uploaded_file.content_type.split('/')[0]
     if content_type in settings.UPLOAD_EXTENSIONS:
         if uploaded_file.size > settings.MAX_CONTENT_LENGTH:
@@ -90,7 +90,7 @@ def faces(request):
     
     context = {'image': img.decode('utf-8'), 'json': faces,'total':len(faces)}
     del img 
-    del jpeg
+    
     del uploaded_file
     del faces
     return JsonResponse(context, safe=False)
@@ -138,7 +138,6 @@ def video_feed(request):
     faces = json.loads(res.content)                                 
     context = {'json': faces,'total':len(faces)}
     del img 
-    del jpeg
     del uploaded_file
     del faces
     return JsonResponse(context, safe=False)
