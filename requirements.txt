@@ -3,7 +3,7 @@ gunicorn==20.0.4
 numpy==1.19.2
 django-heroku==0.3.1
 mtcnn==0.1.0
-tensorflow_cpu-2.4.1-cp38-cp38-manylinux2010_x86_64.whl
+tensorflow_cpu>=2.4
 opencv-python-headless
 psycopg2
 whitenoise
