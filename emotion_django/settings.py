@@ -23,9 +23,9 @@ SECRET_KEY = 'm&7i$^86epd=l_j#946*lxj3h$j7e!$ik6g%x*(h3q(-0swrhs'
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['emotion-recognition-fer13.herokuapp.com/']
+ALLOWED_HOSTS = ['emotion-recognition-fer13.herokuapp.com/','localhost']
 
 
 # Application definition
@@ -41,7 +41,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    #'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -120,9 +120,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 STATIC_ROOT = 'api'
 STATIC_URL = '/static/'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+#STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MAX_CONTENT_LENGTH = 4*1024*1024
 UPLOAD_EXTENSIONS = ['image']
-import django_heroku
-django_heroku.settings(locals())
+#import django_heroku
+#django_heroku.settings(locals())

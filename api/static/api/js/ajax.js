@@ -27,7 +27,7 @@ function detectEmotions() {
     formData.append('file', $('#fileInput').prop('files')[0]);
     $.ajax({
         type: 'POST',
-        url: '/predict',
+        url: '/api/predict',
         data: formData,
         dataType: "json",
         processData: false,
@@ -59,7 +59,7 @@ function detectFaces() {
 
     $.ajax({
         type: 'POST',
-        url: '/faces',
+        url: '/api/faces',
         data: formData,
         dataType: 'json',
         processData: false,
@@ -113,7 +113,7 @@ function camera(param) {
                     formData.append('file', blob);
                     $.ajax({
                         type: 'POST',
-                        url: '/camera',
+                        url: '/api/camera',
                         data: formData,
                         dataType: "json",
                         processData: false,
