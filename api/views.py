@@ -64,7 +64,7 @@ def predict(request):
 
 
 @csrf_exempt
-def faces(request,detector):
+def faces(request):
     if len(request.FILES)==0:
         return HttpResponse(" Please Choose a file",status=404)
     uploaded_file = request.FILES['file']

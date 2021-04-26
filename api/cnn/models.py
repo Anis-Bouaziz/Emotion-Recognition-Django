@@ -16,22 +16,22 @@ def detect_face(img,detector):
     
     faces = detector.detect_faces(img)
     result = []
-    if faces:
-        for face in faces:
-            if face['confidence']>0.9:
-                x, y, w, h = face['box']
-                try:
-                    result.append({'box': {
-                        "top": x,
-                        "left": y,
-                        "width": w,
-                        "height": h
-                    },
-                        'landmarks': face['keypoints'],
+    # if faces:
+    #     for face in faces:
+    #         if face['confidence']>0.9:
+    #             x, y, w, h = face['box']
+    #             try:
+    #                 result.append({'box': {
+    #                     "top": x,
+    #                     "left": y,
+    #                     "width": w,
+    #                     "height": h
+    #                 },
+    #                     'landmarks': face['keypoints'],
 
-                    })
-                except Exception as e:
-                    print(str(e))
+    #                 })
+    #             except Exception as e:
+    #                 print(str(e))
     del faces
     
     
