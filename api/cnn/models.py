@@ -35,7 +35,7 @@ def detect_faces(img):
                     print(str(e))
     del faces
     del gray_fr
-    del detector
+    
     return JsonResponse(result, safe=False)
 
 
@@ -71,6 +71,5 @@ def predict_emotion(img):
                     print(str(e))
     del faces
     del gray_fr
-    del detector
-    del emotion_classifier
+   
     return JsonResponse(result, safe=False)
