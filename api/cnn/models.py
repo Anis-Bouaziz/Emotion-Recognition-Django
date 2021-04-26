@@ -20,7 +20,7 @@ def detect_faces(img):
     result = []
     if faces:
         for face in faces:
-            if face['confidence']>0.99:
+            if face['confidence']>0.9:
                 x, y, w, h = face['box']
                 try:
                     result.append({'box': {
@@ -44,7 +44,7 @@ def predict_emotion(img):
     faces = detector.detect_faces(img)
     if faces:
         for face in faces:
-            if face['confidence']>0.99:
+            if face['confidence']>0.9:
                 x, y, w, h = face['box']
                 fc = gray_fr[y:y+h, x:x+w]
                 try:
@@ -52,7 +52,7 @@ def predict_emotion(img):
                     roi = roi.astype("float") / 255.0
                     roi = tf.keras.preprocessing.image.img_to_array(roi)
                     roi = np.expand_dims(roi, axis=0)
-                    preds = emotion_classifier.predict(roi)[0]
+                    preds = emotion_classifier.predict(tf.convert_to_tensor(roi))[0]
                     emotion_probability = np.max(preds)
                     label = EMOTIONS[preds.argmax()]
                     result.append({'box': {
