@@ -1,7 +1,7 @@
 import cv2
+import tensorflow as tf
 import numpy as np
 from tensorflow.keras.models import load_model
-from keras.preprocessing.image import img_to_array
 from django.http import JsonResponse
 from mtcnn import MTCNN
 detector = MTCNN()
@@ -51,7 +51,7 @@ def predict_emotion(img):
                 try:
                     roi = cv2.resize(fc, (48, 48))
                     roi = roi.astype("float") / 255.0
-                    roi = img_to_array(roi)
+                    roi = tf.keras.preprocessing.image.img_to_array(roi)
                     roi = np.expand_dims(roi, axis=0)
                     preds = emotion_classifier.predict(roi)[0]
                     emotion_probability = np.max(preds)
