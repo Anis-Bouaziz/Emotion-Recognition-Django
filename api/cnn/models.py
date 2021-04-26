@@ -5,7 +5,6 @@ from tensorflow.keras.models import load_model
 from django.http import JsonResponse
 from mtcnn import MTCNN
 detector = MTCNN()
-
 emotion_classifier = load_model("api/cnn/video.h5", compile=False)
 
 
@@ -36,6 +35,7 @@ def detect_faces(img):
                     print(str(e))
     del faces
     del gray_fr
+    del detector
     return JsonResponse(result, safe=False)
 
 
@@ -71,4 +71,6 @@ def predict_emotion(img):
                     print(str(e))
     del faces
     del gray_fr
+    del detector
+    del emotion_classifier
     return JsonResponse(result, safe=False)
