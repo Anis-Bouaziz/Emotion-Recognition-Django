@@ -52,6 +52,10 @@ def predict(request):
     _, jpeg = cv2.imencode('.jpg', img)
     img = base64.encodebytes(jpeg.tobytes())
     context = {'image': img.decode('utf-8'), 'json': faces,'total':len(faces)}
+    del img 
+    del jpeg
+    del uploaded_file
+    del faces
     return JsonResponse(context, safe=False)
     
 
@@ -85,6 +89,10 @@ def faces(request):
     img = base64.encodebytes(jpeg.tobytes())
     
     context = {'image': img.decode('utf-8'), 'json': faces,'total':len(faces)}
+    del img 
+    del jpeg
+    del uploaded_file
+    del faces
     return JsonResponse(context, safe=False)
 
 
@@ -129,5 +137,9 @@ def video_feed(request):
     res= predict_emotion(img)                           
     faces = json.loads(res.content)                                 
     context = {'json': faces,'total':len(faces)}
+    del img 
+    del jpeg
+    del uploaded_file
+    del faces
     return JsonResponse(context, safe=False)
     
