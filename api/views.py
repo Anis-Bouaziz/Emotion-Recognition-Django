@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.http import JsonResponse,StreamingHttpResponse,HttpResponseServerError
-from api.cnn.models import predict_emotion, detect_face
+from api.cnn.retinaface import pad_input_image,recover_pad_output,draw_bbox_landm,draw_bbox_emotion
 import cv2
 import numpy as np
 import base64
