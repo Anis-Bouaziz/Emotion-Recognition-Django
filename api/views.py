@@ -15,6 +15,7 @@ from django.template.defaultfilters import filesizeformat
 from django.utils.translation import ugettext_lazy as _
 from django import forms
 from tensorflow.keras.models import load_model
+import tensorflow as tf
 emotion_classifier = load_model("api/cnn/video.h5", compile=False)
 model=tf.saved_model.load(
     'api/cnn/retina_model', tags=None, options=None)
