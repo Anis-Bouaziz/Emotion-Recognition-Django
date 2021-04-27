@@ -113,7 +113,7 @@ function camera(param) {
                     formData.append('file', blob);
                     $.ajax({
                         type: 'POST',
-                        url: '/api/camera',
+                        url: '/api/predict',
                         data: formData,
                         dataType: "json",
                         processData: false,

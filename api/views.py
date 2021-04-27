@@ -15,11 +15,9 @@ from django.template.defaultfilters import filesizeformat
 from django.utils.translation import ugettext_lazy as _
 from django import forms
 from tensorflow.keras.models import load_model
-from mtcnn import MTCNN
-font = cv2.FONT_HERSHEY_SIMPLEX
-detector = MTCNN()
 emotion_classifier = load_model("api/cnn/video.h5", compile=False)
-
+model=tf.saved_model.load(
+    'api/cnn/retina_model', tags=None, options=None)
 
 
     
@@ -41,25 +39,28 @@ def predict(request):
         return HttpResponse('File type is not supported',status=500)
     pass
     
-    img = cv2.imdecode(np.fromstring(uploaded_file.read(),
-                                    np.uint8), cv2.IMREAD_COLOR)
-    res=predict_emotion(img,detector,emotion_classifier)
-    faces = json.loads(res.content)
-    for face in faces:
-        
-        x, y, w, h = face['box'].values()
-        cv2.putText(img, face['emotion']+' '+face['probability'][:4],
-                    (x, y-10), font, 0.75, (0, 0, 255), 2)
-        cv2.rectangle(img, (x, y), (x+w, y+h), (0, 0, 255), 2)
-    img = image_resize(img, width=600)
-    _, jpeg = cv2.imencode('.jpg', img)
-    img = base64.encodebytes(jpeg.tobytes())
-    context = {'image': img.decode('utf-8'), 'json': faces,'total':len(faces)}
-    del img 
-    del jpeg
-    del uploaded_file
-    del faces
+    img_raw = cv2.imdecode(np.fromstring(uploaded_file.read(),
+                                     np.uint8), cv2.IMREAD_UNCHANGED)
+    img_height_raw, img_width_raw, _ = img_raw.shape
+    img = np.float32(img_raw.copy())
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    # pad input image to avoid unmatched shape problem
+    img, pad_params = pad_input_image(img, max_steps=max([8, 16, 32]))
+
+    outputs = model(img[np.newaxis, ...]).numpy()
+
+    # recover padding effect
+    outputs = recover_pad_output(outputs, pad_params)
+    json=[]
+    for prior_index in range(len(outputs)):
+        draw_bbox_emotion(img_raw, outputs[prior_index], img_height_raw,
+                                img_width_raw,json,emotion_classifier)
+        img = image_resize(img_raw, width=600)
+        _, jpeg = cv2.imencode('.jpg', img)
+        img = base64.encodebytes(jpeg.tobytes())
+    context = {'image': img.decode('utf-8'), 'json': json,'total':len(outputs)}
     return JsonResponse(context, safe=False)
+
     
 
 
@@ -79,24 +80,25 @@ def faces(request):
     img = cv2.imdecode(np.fromstring(uploaded_file.read(),
                                      np.uint8), cv2.IMREAD_COLOR)
     
-    res = detect_face(img,detector)
-    # faces = json.loads(res.content)
-    # for face in faces:
-    #     x, y, w, h = face['box'].values()
-    #     cv2.rectangle(img, (x, y), (x+w, y+h), (0, 0, 255), 2)
-    #     for t in face['landmarks'].values():
+    img_height_raw, img_width_raw, _ = img_raw.shape
+    img = np.float32(img_raw.copy())
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    # pad input image to avoid unmatched shape problem
+    img, pad_params = pad_input_image(img, max_steps=max([8, 16, 32]))
 
-    #         cv2.circle(img, tuple(t), 3, (0, 0, 255), -1)
-    # img = image_resize(img, width=600)
-    # _, jpeg = cv2.imencode('.jpg', img)
-    # img = base64.encodebytes(jpeg.tobytes())
+    outputs = model(img[np.newaxis, ...]).numpy()
+
+    # recover padding effect
+    outputs = recover_pad_output(outputs, pad_params)
+    json=[]
+    for prior_index in range(len(outputs)):
+        draw_bbox_landm(img_raw, outputs[prior_index], img_height_raw,
+                                img_width_raw,json)
+        img = image_resize(img_raw, width=600)
+        _, jpeg = cv2.imencode('.jpg', img)
+        img = base64.encodebytes(jpeg.tobytes())
     
-    # context = {'image': img.decode('utf-8'), 'json': faces,'total':len(faces)}
-    # del img 
-    
-    # del uploaded_file
-    # del faces
-    context={}
+    context = {'image': img.decode('utf-8'), 'json':json,'total':len(outputs)}
     return JsonResponse(context, safe=False)
 
 
@@ -131,18 +133,5 @@ def image_resize(image, width=None, height=None, inter=cv2.INTER_AREA):
     # return the resized image
     return resized
 
-@csrf_exempt
-def video_feed(request):
-    if len(request.FILES)==0:
-        return HttpResponse(" Camera is off",status=404)
-    uploaded_file = request.FILES['file']
-    img = cv2.imdecode(np.fromstring(uploaded_file.read(),
-                                     np.uint8), cv2.IMREAD_UNCHANGED)
-    res= predict_emotion(img,detector,emotion_classifier)                           
-    faces = json.loads(res.content)                                 
-    context = {'json': faces,'total':len(faces)}
-    del img 
-    del uploaded_file
-    del faces
-    return JsonResponse(context, safe=False)
+
     
