@@ -14,16 +14,15 @@ from django.conf import settings
 from django.template.defaultfilters import filesizeformat
 from django.utils.translation import ugettext_lazy as _
 from django import forms
-from tensorflow.keras.models import load_model
+
 import tensorflow as tf
-emotion_classifier = load_model("api/cnn/video.h5", compile=False)
-model=tf.saved_model.load(
-    'api/cnn/retina_model', tags=None, options=None)
+from django.conf import settings 
 
 
     
 
 def index(request):
+    
     return render(request, 'api/index.html')
 
 
@@ -48,14 +47,14 @@ def predict(request):
     # pad input image to avoid unmatched shape problem
     img, pad_params = pad_input_image(img, max_steps=max([8, 16, 32]))
 
-    outputs = model(img[np.newaxis, ...]).numpy()
+    outputs = settings.model(img[np.newaxis, ...]).numpy()
 
     # recover padding effect
     outputs = recover_pad_output(outputs, pad_params)
     json=[]
     for prior_index in range(len(outputs)):
         draw_bbox_emotion(img_raw, outputs[prior_index], img_height_raw,
-                                img_width_raw,json,emotion_classifier)
+                                img_width_raw,json,settings.emotion_classifier)
         img = image_resize(img_raw, width=600)
         _, jpeg = cv2.imencode('.jpg', img)
         img = base64.encodebytes(jpeg.tobytes())
@@ -87,7 +86,7 @@ def faces(request):
     # pad input image to avoid unmatched shape problem
     img, pad_params = pad_input_image(img, max_steps=max([8, 16, 32]))
 
-    outputs = model(img[np.newaxis, ...]).numpy()
+    outputs = settings.model(img[np.newaxis, ...]).numpy()
 
     # recover padding effect
     outputs = recover_pad_output(outputs, pad_params)
