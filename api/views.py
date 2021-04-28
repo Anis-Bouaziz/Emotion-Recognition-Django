@@ -22,8 +22,8 @@ model_rel_path = "api/cnn/retina_model"
 model = cache.get(model_cache_key)
 
 if model is None:
-    model_path = os.path.realpath(model_rel_path)
-    model = joblib.load(model_path)
+    model_path = model_rel_path
+    model = model=tf.saved_model.load(model_path, tags=None, options=None)
     #save in django memory cache
     cache.set(model_cache_key, model, None)
 
