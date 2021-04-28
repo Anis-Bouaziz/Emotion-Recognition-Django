@@ -6,21 +6,15 @@ from tensorflow.keras.models import load_model
 
 class RetinaFace:
     def __init__(self):
-        model_path="api/cnn/retina_model"
-        if self.model==None:
-            self.model=tf.saved_model.load(model_path, tags=None, options=None)
-    
-    def __del__(self):
-        del self.model
+        model_path="api/cnn/retina_model" 
+        self.model=tf.saved_model.load(model_path, tags=None, options=None)
+
 
 class Xception:
     def __init__(self):
         model_path="api/cnn/video.h5"
-        if self.model==None:
-            self.model= load_model(model_path, compile=False)
+        self.model= load_model(model_path, compile=False)
     
-    def __del__(self):
-        del self.model
 
 
 def pad_input_image(img, max_steps):
