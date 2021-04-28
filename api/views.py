@@ -15,11 +15,20 @@ from django.template.defaultfilters import filesizeformat
 from django.utils.translation import ugettext_lazy as _
 from django import forms
 import tensorflow as tf
+from django.core.cache import cache
+model_cache_key = 'model_cache'
+model_rel_path = "api/cnn/retina_model"
 
+model = cache.get(model_cache_key)
 
+if model is None:
+    model_path = os.path.realpath(model_rel_path)
+    model = joblib.load(model_path)
+    #save in django memory cache
+    cache.set(model_cache_key, model, None)
 
     
-model=RetinaFace()
+#model=RetinaFace()
 emotion_classifier=Xception()
 
 def index(request):
