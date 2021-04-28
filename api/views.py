@@ -17,17 +17,11 @@ from django import forms
 import tensorflow as tf
 from django.core.cache import cache
 import os
-os.environ['TF_XLA_FLAGS'] = '--tf_xla_enable_xla_devices'
-model_cache_key = 'model_cache'
-model_rel_path = "api/cnn/retina_model"
+from api.cnn.Retina.RetinaModel import model
+#os.environ['TF_XLA_FLAGS'] = '--tf_xla_enable_xla_devices'
 
-model = cache.get(model_cache_key)
 
-if model is None:
-    model_path = model_rel_path
-    model = model=tf.saved_model.load(model_path, tags=None, options=None)
-    #save in django memory cache
-    cache.set(model_cache_key, model, None)
+model = model()
 
     
 #model=RetinaFace()
@@ -90,7 +84,7 @@ def faces(request):
     else:
         return HttpResponse('File type is not supported',status=500)
     pass
-    img = cv2.imdecode(np.fromstring(uploaded_file.read(),
+    img_raw = cv2.imdecode(np.fromstring(uploaded_file.read(),
                                      np.uint8), cv2.IMREAD_COLOR)
     
     img_height_raw, img_width_raw, _ = img_raw.shape

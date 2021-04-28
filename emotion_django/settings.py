@@ -127,9 +127,4 @@ UPLOAD_EXTENSIONS = ['image']
 import django_heroku
 django_heroku.settings(locals())
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'unique-snowflake',
-    }
-}
+
