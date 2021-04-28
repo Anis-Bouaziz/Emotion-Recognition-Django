@@ -19,8 +19,8 @@ import tensorflow as tf
 
 
     
-model=RetinaFace()
-emotion_classifier=Xception()
+#model=RetinaFace()
+#emotion_classifier=Xception()
 
 def index(request):
     
