@@ -16,6 +16,8 @@ from django.utils.translation import ugettext_lazy as _
 from django import forms
 import tensorflow as tf
 from django.core.cache import cache
+import os
+os.environ['TF_XLA_FLAGS'] = '--tf_xla_enable_xla_devices'
 model_cache_key = 'model_cache'
 model_rel_path = "api/cnn/retina_model"
 
