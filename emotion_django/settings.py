@@ -127,8 +127,3 @@ UPLOAD_EXTENSIONS = ['image']
 import django_heroku
 django_heroku.settings(locals())
 
-from tensorflow.keras.models import load_model
-import tensorflow as tf
-emotion_classifier = load_model("api/cnn/video.h5", compile=False)
-model=tf.saved_model.load(
-'api/cnn/retina_model', tags=None, options=None)

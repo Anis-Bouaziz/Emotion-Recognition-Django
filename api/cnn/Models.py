@@ -1,25 +1,46 @@
 import cv2
 import numpy as np
 from tensorflow.keras.preprocessing.image import img_to_array
+import tensorflow as tf
+from tensorflow.keras.models import load_model
+
+class RetinaFace:
+    def __init__(self):
+        model_path="api/cnn/retina_model"
+        if self.model==None:
+            self.model=tf.saved_model.load(model_path, tags=None, options=None)
+    
+    def __del__(self):
+        del self.model
+
+class Xception:
+    def __init__(self):
+        model_path="api/cnn/video.h5"
+        if self.model==None:
+            self.model= load_model(model_path, compile=False)
+    
+    def __del__(self):
+        del self.model
+
 
 def pad_input_image(img, max_steps):
-    """pad image to suitable shape"""
-    img_h, img_w, _ = img.shape
+        """pad image to suitable shape"""
+        img_h, img_w, _ = img.shape
 
-    img_pad_h = 0
-    if img_h % max_steps > 0:
-        img_pad_h = max_steps - img_h % max_steps
+        img_pad_h = 0
+        if img_h % max_steps > 0:
+            img_pad_h = max_steps - img_h % max_steps
 
-    img_pad_w = 0
-    if img_w % max_steps > 0:
-        img_pad_w = max_steps - img_w % max_steps
+        img_pad_w = 0
+        if img_w % max_steps > 0:
+            img_pad_w = max_steps - img_w % max_steps
 
-    padd_val = np.mean(img, axis=(0, 1)).astype(np.uint8)
-    img = cv2.copyMakeBorder(img, 0, img_pad_h, 0, img_pad_w,
-                             cv2.BORDER_CONSTANT, value=padd_val.tolist())
-    pad_params = (img_h, img_w, img_pad_h, img_pad_w)
+        padd_val = np.mean(img, axis=(0, 1)).astype(np.uint8)
+        img = cv2.copyMakeBorder(img, 0, img_pad_h, 0, img_pad_w,
+                                cv2.BORDER_CONSTANT, value=padd_val.tolist())
+        pad_params = (img_h, img_w, img_pad_h, img_pad_w)
 
-    return img, pad_params
+        return img, pad_params
 
 
 def recover_pad_output(outputs, pad_params):
