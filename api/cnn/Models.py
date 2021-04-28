@@ -8,7 +8,7 @@ class RetinaFace:
     def __init__(self):
         model_path="api/cnn/retina_model" 
         self.model=tf.saved_model.load(model_path, tags=None, options=None)
-        tf.keras.backend.clear_session()
+        
 
 
 class Xception:
