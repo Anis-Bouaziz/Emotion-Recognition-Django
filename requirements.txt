@@ -6,3 +6,4 @@ tensorflow_cpu>=2.4
 opencv-python-headless
 psycopg2
 whitenoise
+yaml
