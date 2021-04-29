@@ -4,11 +4,16 @@ from tensorflow.keras.preprocessing.image import img_to_array
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 
-class RetinaFace:
+class RetinaFace(object):
     def __init__(self):
+        #self.session = tf.compat.v1.Session()
         model_path="api/cnn/retina_model" 
+        #self.model=tf.saved_model.loader.load(self.session,[tf.saved_model.tag_constants.SERVING],model_path)
         self.model=tf.saved_model.load(model_path, tags=None, options=None)
-        
+    # def predict(self, images):
+    # predictions = self.session.run(self.model, {'Placeholder:0': images})
+    # # TODO: convert to human-friendly labels
+    # return predictions   
 
 
 class Xception:

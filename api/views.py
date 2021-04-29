@@ -15,17 +15,15 @@ from django.template.defaultfilters import filesizeformat
 from django.utils.translation import ugettext_lazy as _
 from django import forms
 import tensorflow as tf
-from django.core.cache import cache
 import os
-from api.cnn.Retina.RetinaModel import model
+#from api.cnn.Retina.RetinaModel import model
 #os.environ['TF_XLA_FLAGS'] = '--tf_xla_enable_xla_devices'
 
 
-model = model()
+
 
     
-#model=RetinaFace()
-emotion_classifier=Xception()
+
 
 def index(request):
     
@@ -35,6 +33,8 @@ def index(request):
 
 @csrf_exempt
 def predict(request):
+    model=RetinaFace().model
+    emotion_classifier=Xception().model
     if len(request.FILES)==0:
         return HttpResponse(" Please Choose a file",status=404)
     uploaded_file = request.FILES['file']
@@ -66,6 +66,8 @@ def predict(request):
         _, jpeg = cv2.imencode('.jpg', img)
         img = base64.encodebytes(jpeg.tobytes())
     context = {'image': img.decode('utf-8'), 'json': json,'total':len(outputs)}
+    del model
+    del emotion_classifier
     return JsonResponse(context, safe=False)
 
     
@@ -73,6 +75,8 @@ def predict(request):
 
 @csrf_exempt
 def faces(request):
+    model=RetinaFace().model
+    emotion_classifier=Xception().model
     if len(request.FILES)==0:
         return HttpResponse(" Please Choose a file",status=404)
     uploaded_file = request.FILES['file']
@@ -106,6 +110,8 @@ def faces(request):
         img = base64.encodebytes(jpeg.tobytes())
     
     context = {'image': img.decode('utf-8'), 'json':json,'total':len(outputs)}
+    del model
+    del emotion_classifier
     return JsonResponse(context, safe=False)
 
 
