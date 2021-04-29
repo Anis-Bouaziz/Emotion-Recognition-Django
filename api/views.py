@@ -15,17 +15,16 @@ from django.template.defaultfilters import filesizeformat
 from django.utils.translation import ugettext_lazy as _
 from django import forms
 import tensorflow as tf
-from django.core.cache import cache
 import os
-from api.cnn.Retina.RetinaModel import model
+#from api.cnn.Retina.RetinaModel import model
 #os.environ['TF_XLA_FLAGS'] = '--tf_xla_enable_xla_devices'
 
 
-model = model()
+
 
     
-#model=RetinaFace()
-emotion_classifier=Xception()
+model=RetinaFace().model
+emotion_classifier=Xception().model
 
 def index(request):
     
