@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+
+<head>
+    {% load static %}
+    <title>Face API</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link rel=stylesheet href=https://cdn.jsdelivr.net/npm/pretty-print-json@1.0/dist/pretty-print-json.css>
+    <link rel="stylesheet" href="{% static 'face_API/css/style.css' %}" />
+    <link rel="shortcut icon" href="{% static 'face_API/favicon.ico' %}" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+    <div style=" justify-content: center; align-items: center; ">
+
+        <h1>Face API Demo</h1>
+
+    </div>
+
+
+    <div style=" display: flex; justify-content: center; align-items: center;" id="pic">
+
+        <form target="popup" onclick="window.open('OpenCamera','popup','width=640,height=480,left=400,top=400');return false;">
+            <input type="submit" value=camera class="btn btn-outline-primary mr-2">
+        </form>
+        <input type="file" id="fileInput" name="file">
+        <div id="verification" hidden>
+            <input type="file" id="fileInput2" name="file2">
+            <button class="btn btn-outline-warning mr-2" onclick="VerifyFaces()">Verify faces</button>
+        </div>
+
+        <button class="btn btn-outline-success mr-2" onclick="detectFaces()">Detect faces</button>
+        <button class="btn btn-outline-success mr-2" onclick="detectEmotions()">Detect emotions</button>
+        <button class="btn btn-outline-success mr-2" onclick="detectMask()">Detect Mask</button>
+        <div class="btn btn-outline-success mr-2 disabled " style="opacity: 1;padding: inherit; ">
+
+            <span style="margin :1em ;"> Face Verification</span> <input style="height:10px ;" type="checkbox" name="verif" data-toggle="toggle" data-onstyle="success" onchange="document.getElementById('verification').hidden=!(document.getElementById('verification').hidden);document.getElementById('verifImg').hidden=!(document.getElementById('verifImg').hidden)">
+        </div>
+
+    </div>
+    <hr style="background-color: white;">
+
+    <div>
+        <div style="display:flex ;align-items:flex-start; align-content:flex-start; gap: 50px;" id="b">
+
+            <img id="canvasOutput" src="" style="width:600px;">
+
+            <pre id="pre" style="height: 500px;;width:40%; overflow: auto; background-color: white; padding: 10px;" hidden><code  id="code" ></code></pre>
+
+
+
+        </div>
+        <img id="verifImg" src="" style="width:600px;">
+    </div>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+    <script src=https://cdn.jsdelivr.net/npm/pretty-print-json@1.0/dist/pretty-print-json.min.js></script>
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+    <script src="{% static 'face_API/js/ajax.js' %}"></script>
+</body>
+
+
+</html>

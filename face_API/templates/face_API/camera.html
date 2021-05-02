@@ -1,0 +1,23 @@
+<script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous">
+</script>
+<img src="{% url 'camera' %}" id='video'>
+<script>
+    $(window).on('unload', function() {
+        var check = new FormData();
+        check.append('cam', 0)
+        $.ajax({
+            type: 'POST',
+            url: '/api/CloseCamera',
+            data: check,
+            dataType: "json",
+            processData: false,
+            contentType: false,
+
+            success: function(response) {
+                vid.src = "#"
+                pic.hidden = false
+            },
+            error: console.log("error")
+        })
+    });
+</script>

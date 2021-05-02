@@ -1,1 +1,0 @@
-web: gunicorn emotion_django.wsgi --max-requests-jitter 1
