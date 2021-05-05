@@ -8,23 +8,28 @@ let pic = document.getElementById("pic");
 let vid = document.getElementById('video')
 let viddiv = document.getElementById('viddiv')
 let verifImg = document.getElementById('verifImg')
-
+let imgsource1 = document.getElementById('imgsource1')
+let imgsource2 = document.getElementById('imgsource2')
 
 inputElement.addEventListener('change', (e) => {
 
     canvas.src = URL.createObjectURL(e.target.files[0]);
+    imgsource1.src = URL.createObjectURL(e.target.files[0]);
     canvas.hidden = false
 }, false);
 inputElement2.addEventListener('change', (e) => {
 
     verifImg.src = URL.createObjectURL(e.target.files[0]);
+    imgsource2.src = URL.createObjectURL(e.target.files[0]);
     verifImg.hidden = false
 }, false);
 
-function detectEmotions() {
-
+async function detectEmotions() {
+    var img = await fetch(imgsource1.src)
+    var blob = await img.blob()
+    var file = await new File([blob], 'ex.jpg', blob)
     var formData = new FormData();
-    formData.append('file', $('#fileInput').prop('files')[0]);
+    formData.append('file', file);
     $.ajax({
         type: 'POST',
         url: '/face_API/emotion',
@@ -48,10 +53,12 @@ function detectEmotions() {
     })
 }
 
-function detectMask() {
-
+async function detectMask() {
+    var img = await fetch(imgsource1.src)
+    var blob = await img.blob()
+    var file = await new File([blob], 'ex.jpg', blob)
     var formData = new FormData();
-    formData.append('file', $('#fileInput').prop('files')[0]);
+    formData.append('file', file);
     $.ajax({
         type: 'POST',
         url: '/face_API/mask',
@@ -75,10 +82,14 @@ function detectMask() {
     })
 }
 
-function detectFaces() {
-
+async function detectFaces() {
+    var img = await fetch(imgsource1.src)
+    var blob = await img.blob()
+    var file = await new File([blob], 'ex.jpg', blob)
     var formData = new FormData();
-    formData.append('file', $('#fileInput').prop('files')[0]);
+
+    formData.append('file', file)
+        //formData.append('file', $('#fileInput').prop('files')[0]);
 
     $.ajax({
         type: 'POST',
@@ -127,10 +138,18 @@ function camera(param) {
     }
 }
 
-function VerifyFaces() {
+async function VerifyFaces() {
+    var img = await fetch(imgsource1.src)
+    var blob = await img.blob()
+    var file1 = await new File([blob], 'ex.jpg', blob)
+
+    var img = await fetch(imgsource2.src)
+    var blob = await img.blob()
+    var file2 = await new File([blob], 'ex2.jpg', blob)
+
     var formData = new FormData();
-    formData.append('file', $('#fileInput').prop('files')[0]);
-    formData.append('file2', $('#fileInput2').prop('files')[0]);
+    formData.append('file', file1);
+    formData.append('file2', file2);
 
     $.ajax({
         type: 'POST',
@@ -154,3 +173,39 @@ function VerifyFaces() {
         }
     })
 }
+/***********************************************************************/
+jQuery(function($) {
+
+    $(".sidebar-dropdown > a").click(function() {
+        $(".sidebar-submenu").slideUp(200);
+        if (
+            $(this)
+            .parent()
+            .hasClass("active")
+        ) {
+            $(".sidebar-dropdown").removeClass("active");
+            $(this)
+                .parent()
+                .removeClass("active");
+        } else {
+            $(".sidebar-dropdown").removeClass("active");
+            $(this)
+                .next(".sidebar-submenu")
+                .slideDown(200);
+            $(this)
+                .parent()
+                .addClass("active");
+        }
+    });
+
+    $("#close-sidebar").click(function() {
+        $(".page-wrapper").removeClass("toggled");
+    });
+    $("#show-sidebar").click(function() {
+        $(".page-wrapper").addClass("toggled");
+    });
+
+
+
+
+});

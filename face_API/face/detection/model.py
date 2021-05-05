@@ -52,10 +52,8 @@ class RetinaFace(object):
             x1, y1, x2, y2 = int(face[0] * img_width), int(face[1] * img_height), \
                             int(face[2] * img_width), int(face[3] * img_height)
             res.append({'box': {
-                    "top": x1,
-                    "left": y1,
-                    "width": x2,
-                    "height": y2
+                    "start point": (x1,y1),
+                    "end point": (x2,y2)
                 },
 
                     'landmarks': {

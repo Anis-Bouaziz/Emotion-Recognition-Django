@@ -53,9 +53,9 @@ def preprocess_face(face):
     face=cv2.resize(face,(224,224))
     face = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
     face = img_to_array(face)
-    # face = face[..., ::-1]
-    # face[..., 0] -= 91.4953
-    # face[..., 1] -= 103.8827
-    # face[..., 2] -= 131.0912
+    face = face[..., ::-1]
+    face[..., 0] -= 91.4953
+    face[..., 1] -= 103.8827
+    face[..., 2] -= 131.0912
     face = np.expand_dims(face, axis=0)
     return face

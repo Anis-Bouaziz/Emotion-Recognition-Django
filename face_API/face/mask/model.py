@@ -50,10 +50,8 @@ class Mask_detection(object):
                      int(face[2] * img_width), int(face[3] * img_height)
             label ,mask_probability=self.predict(image[y1:y2, x1:x2])
             res.append({'box': {
-                        "top": x1,
-                        "left": y1,
-                        "width": x2,
-                        "height": y2
+                        "start point": (x1,y1),
+                    "end point": (x2,y2)
                     },
 
                         'Mask': label,

@@ -102,8 +102,6 @@ def detect_mask(request):
 
     return JsonResponse(context, safe=False)
 
-
-
 @csrf_exempt
 def verifyFaces(request):
     if len(request.FILES)!=2:

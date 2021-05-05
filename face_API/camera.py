@@ -9,21 +9,6 @@ from scipy import spatial
 
       
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def draw_bbox_all(img, ann, img_height, img_width,emotion_classifier,mask):
     """draw bboxes and landmarks"""
     Masks = ["ON", "OFF"]
