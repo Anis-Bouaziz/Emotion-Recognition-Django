@@ -44,6 +44,7 @@ class RetinaFace(object):
                                 int(face[11] * img_height)), 1, (255, 0, 0), 2)
                 cv2.circle(image, (int(face[12] * img_width),
                                 int(face[13] * img_height)), 1, (255, 0, 0), 2)
+        return image
     def json(self,image):
         res=[]
         img_height, img_width, _ = image.shape

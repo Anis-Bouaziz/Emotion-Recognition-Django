@@ -3,6 +3,11 @@ from scipy.spatial.distance import cosine
 from face_API.face.verification.vgg16 import RESNET50
 from tensorflow.keras.preprocessing.image import img_to_array
 import numpy as np
+import pickle
+from sklearn.svm import SVC
+from sklearn.model_selection import train_test_split
+from numpy import load
+import os
 class FaceVerif(object):
     def __init__(self,retina):
         self.retina=retina
@@ -12,7 +17,6 @@ class FaceVerif(object):
                         classes=8631)
         
     def __del__(self):
-        
         del self.retina
     def predict(self,face1,face2):
         emb1=self.model.predict(preprocess_face(face1))
@@ -45,6 +49,61 @@ class FaceVerif(object):
         else:
             res.append({'error' :'each image must contain one face'})
         return res
+    def createUserModel(self,images):
+        data = pickle.loads(open('face_API/face/verification/embeddings.pkl', "rb").read())
+        
+        for img in images:
+            img_height, img_width, _ = img.shape
+            face=self.retina.predict(img)
+            if len(face)==1:
+                face=face[0]
+                x1, y1, x2, y2 = int(face[0] * img_width), int(face[1] * img_height), \
+                            int(face[2] * img_width), int(face[3] * img_height)
+                emb=self.model.predict(preprocess_face(img[y1:y2, x1:x2]))
+                data['embeddings'].append(emb[0])
+                data['class']=np.append(data['class'],1)
+        xtrain ,xtest ,ytrain,ytest=train_test_split(np.asarray(data['embeddings']),np.asarray(data['class']),test_size=0.1)
+        recognizer = SVC(C=1.0, kernel="linear", probability=True)
+        recognizer.fit(xtrain, ytrain)
+        print(recognizer.score(xtest,ytest))
+        return pickle.dumps(recognizer)
+
+    def authenticate(self,image,usermodel):
+        img_height, img_width, _ = image.shape
+        face=self.retina.predict(image)[0]
+        x1, y1, x2, y2 = int(face[0] * img_width), int(face[1] * img_height), \
+                            int(face[2] * img_width), int(face[3] * img_height)
+        embeddings=self.model.predict(preprocess_face(image[y1:y2, x1:x2]))
+        usermodel=pickle.loads(usermodel)
+        return usermodel.predict(embeddings)[0]
+    def create_dataset(self):
+        rootdir = 'face_API/face/verification/archive/train'
+        data=[]
+        for subdir, dirs, files in os.walk(rootdir):
+            for file in files:
+                img=cv2.imread(os.path.join(subdir, file))
+                
+                if img is not None:
+                    img_height, img_width, _ = img.shape
+                    face=self.retina.predict(img)
+                    
+                    if len(face)!=0:
+                        face=face[0]
+                        x1, y1, x2, y2 = int(face[0] * img_width), int(face[1] * img_height), \
+                                    int(face[2] * img_width), int(face[3] * img_height)
+                        if img[y1:y2, x1:x2].shape[0]!=0:
+                            emb=self.model.predict(preprocess_face(img[y1:y2, x1:x2]))
+                            data.append(emb[0])
+        embeddings={'embeddings':data,'class':np.zeros(len(data))}
+        print(embeddings)
+        f = open('embeddingd.pkl', "wb")
+        f.write(pickle.dumps(embeddings))
+        f.close()
+        
+
+        
+
+
             
             
             

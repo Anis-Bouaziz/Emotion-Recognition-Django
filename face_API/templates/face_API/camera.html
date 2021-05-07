@@ -1,3 +1,5 @@
+{% load static %}
+<link rel="shortcut icon" href="{% static 'face_API/favicon.ico' %}" type="image/x-icon">
 <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous">
 </script>
 <img src="{% url 'camera' %}" id='video'>
@@ -7,7 +9,7 @@
         check.append('cam', 0)
         $.ajax({
             type: 'POST',
-            url: '/api/CloseCamera',
+            url: '/face_API/CloseCamera',
             data: check,
             dataType: "json",
             processData: false,

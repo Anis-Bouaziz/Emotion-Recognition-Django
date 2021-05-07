@@ -81,6 +81,34 @@ async function detectMask() {
         }
     })
 }
+async function detectAttributes() {
+    var img = await fetch(imgsource1.src)
+    var blob = await img.blob()
+    var file = await new File([blob], 'ex.jpg', blob)
+    var formData = new FormData();
+    formData.append('file', file);
+    $.ajax({
+        type: 'POST',
+        url: '/face_API/attributes',
+        data: formData,
+        dataType: "json",
+        processData: false,
+        contentType: false,
+
+
+
+        success: function(response) {
+
+            canvas.src = "data:image/jpeg;base64," + response.image;
+            code.innerHTML = "Total faces detected : " + response.total + "\n Json:\n" + prettyPrintJson.toHtml(response.json)
+            pre.hidden = false
+        },
+        error: function(jqXHR, textStatus, error) {
+
+            alert(jqXHR.responseText)
+        }
+    })
+}
 
 async function detectFaces() {
     var img = await fetch(imgsource1.src)
@@ -115,7 +143,7 @@ function camera(param) {
 
     var check = new FormData();
     if (param.checked) {
-        vid.src = "/api/camera"
+        vid.src = "/face_API/camera"
         viddiv.hidden = false
         pic.hidden = true
 
@@ -123,7 +151,7 @@ function camera(param) {
         check.append('cam', 0)
         $.ajax({
             type: 'POST',
-            url: '/api/Close',
+            url: '/face_API/CloseCamera',
             data: check,
             dataType: "json",
             processData: false,
@@ -209,3 +237,137 @@ jQuery(function($) {
 
 
 });
+
+
+/***********************************************************/
+
+const video = document.getElementById('webcam');
+const canvasElement = document.getElementById('canvas');
+
+
+function Modal() {
+    document.getElementById('id01').style.display = 'block'
+    if (navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
+                video.srcObject = stream;
+            })
+            .catch(function(err0r) {
+                console.log("Something went wrong!");
+            });
+
+    }
+
+}
+
+function Signup_Modal() {
+    document.getElementById('id02').style.display = 'block'
+        // if (navigator.mediaDevices.getUserMedia) {
+        //     navigator.mediaDevices.getUserMedia({ video: true })
+        //         .then(function(stream) {
+        //             video.srcObject = stream;
+        //         })
+        //         .catch(function(err0r) {
+        //             console.log("Something went wrong!");
+        //         });
+
+    // }
+}
+// Get the modal
+var modal = document.getElementById('id01');
+var modal2 = document.getElementById('id02');
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+        stream = video.srcObject;
+        stream.getTracks().forEach(function(track) {
+            track.stop();
+        });
+    }
+    if (event.target == modal2) {
+        modal2.style.display = "none";
+        // stream = video.srcObject;
+        // stream.getTracks().forEach(function(track) {
+        //     track.stop();
+        // });
+    }
+}
+$("#submit").click(function(e) {
+    e.preventDefault()
+        /* set the canvas to the dimensions of the video feed */
+    canvasElement.width = video.videoWidth;
+    canvasElement.height = video.videoHeight;
+    /* make the snapshot */
+    canvasElement.getContext('2d').drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
+    var img = canvasElement.toDataURL("image/jpeg");
+    var blobBin = atob(img.split(',')[1]);
+    var array = [];
+    for (var i = 0; i < blobBin.length; i++) {
+        array.push(blobBin.charCodeAt(i));
+    }
+    var file = new Blob([new Uint8Array(array)], { type: 'image/png' });
+    var formdata = new FormData();
+    formdata.append('file', file);
+    /* username */
+    var username = document.getElementById('username').value
+    formdata.append('username', username);
+    $.ajax({
+        type: 'POST',
+        url: '/face_API/Facelogin',
+        data: formdata,
+
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            location.reload()
+                // modal.style.display = "none";
+                // stream = video.srcObject;
+                // stream.getTracks().forEach(function(track) {
+                //     track.stop();
+                // });
+
+
+        },
+        error: function(jqXHR, textStatus, error) {
+
+            alert(jqXHR.responseText)
+        }
+    })
+
+})
+
+$("#signup").click(function(e) {
+    e.preventDefault()
+    var files = document.getElementById('files').files
+    var profilepic = document.getElementById('profilepic').files[0]
+    var formdata = new FormData();
+
+    for (let i = 0; i < files.length; i++) {
+        formdata.append(i, files[i])
+    }
+    /* username and email*/
+    var username = document.getElementById('signup_username').value
+    var email = document.getElementById('email').value
+    formdata.append('Profilepicture', profilepic)
+    formdata.append('email', email);
+    formdata.append('username', username);
+    $.ajax({
+        type: 'POST',
+        url: '/face_API/Facesignin',
+        data: formdata,
+
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            location.reload()
+
+
+
+        },
+        error: function(jqXHR, textStatus, error) {
+
+            alert(jqXHR.responseText)
+        }
+    })
+})

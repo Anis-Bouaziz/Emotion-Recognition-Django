@@ -26,35 +26,27 @@
                             <i class="fas fa-times"></i>
                         </div>
                     </div>
-                    <div class="sidebar-header" hidden>
+                    <div class="sidebar-header">
                         <div class="user-pic">
-                            <img class="img-responsive img-rounded" src="https://raw.githubusercontent.com/azouaoui-med/pro-sidebar-template/gh-pages/src/img/user.jpg" alt="User picture">
+                            {% if user.is_authenticated %}
+                            <img class="img-responsive img-rounded" id='userpic' src="{{ user.profilePic.url }}" alt="User picture"> {% else %}
+
+                            <img class="img-responsive img-rounded" id='userpic' src="https://raw.githubusercontent.com/azouaoui-med/pro-sidebar-template/gh-pages/src/img/user.jpg" alt="User picture"> {% endif %}
                         </div>
                         <div class="user-info">
-                            <span class="user-name">Jhon
-                <strong>Smith</strong>
+                            <span class="user-name">{{ user }}
+                
               </span>
-                            <span class="user-role">Administrator</span>
+                            <span class="user-role">{{ user.email }}</span>
                             <span class="user-status">
                 <i class="fa fa-circle"></i>
-                <span>Online</span>
+                <span>Online</span><br>
+                            <span>Last Login: {{ user.last_login }}</span>
                             </span>
                         </div>
                     </div>
                     <!-- sidebar-header  -->
-                    <!-- <div class="sidebar-search">
-                        <div>
-                            <div class="input-group">
-                                <input type="text" class="form-control search-menu" placeholder="Search...">
-                                <div class="input-group-append">
-                                    <span class="input-group-text">
-                    <i class="fa fa-search" aria-hidden="true"></i>
-                  </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div> -->
-                    <!-- sidebar-search  -->
+
                     <div class="sidebar-menu">
                         <ul>
                             <li class="header-menu">
@@ -87,7 +79,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="#" onclick="">
+                                <a href="#" onclick="detectAttributes()">
                                     <i class="fas fa-address-card"></i>
                                     <span>Detect Attributes</span>
                                 </a>
@@ -117,13 +109,38 @@
                             <li class="header-menu">
                                 <span>Extra</span>
                             </li>
-                            <li>
-                                <a href="#" target="popup" onclick="window.open('OpenCamera','popup','width=640,height=480,left=400,top=400');return false;">
+                            <li class="sidebar-dropdown">
+                                <a href="#">
                                     <i class="fas fa-video"></i>
                                     <span>WebCam</span>
                                     <span class="badge badge-pill badge-primary">Beta</span>
 
                                 </a>
+                                <div class="sidebar-submenu">
+                                    <ul>
+                                        <li>
+                                            <a href="#" target="popup" onclick="window.open('OpenCamera/?mode=1','popup','width=640,height=480,left=400,top=400');return false;">
+
+                                                <span>Face detection</span></a>
+                                        </li>
+                                        <li>
+                                            <a href="#" target="popup" onclick="window.open('OpenCamera/?mode=2','popup','width=640,height=480,left=400,top=400');return false;">
+
+                                                <span>Emotion Recognition</span></a>
+                                        </li>
+                                        <li>
+                                            <a href="#" target="popup" onclick="window.open('OpenCamera/?mode=3','popup','width=640,height=480,left=400,top=400');return false;">
+
+                                                <span>Mask detection</span></a>
+                                        </li>
+                                        <li>
+                                            <a href="#" target="popup" onclick="window.open('OpenCamera/?mode=4','popup','width=640,height=480,left=400,top=400');return false;">
+
+                                                <span>Attribute detection</span></a>
+                                        </li>
+
+                                    </ul>
+                                </div>
                             </li>
                             <li>
                                 <a href="https://github.com/Anis-Bouaziz/Face-API-Django" target="_blank">
@@ -160,14 +177,23 @@
                 </div>
                 <!-- sidebar-content  -->
                 <div class="sidebar-footer">
-                    <a href="#">
+
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'Facelogout' %}" id='signout'>
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Sign out</span>
+                    </a>
+                    {% else %}
+
+                    <a href="#" onclick="Modal()" id='signin'>
                         <i class="fas fa-sign-in-alt"></i>
                         <span>Sign in</span>
                     </a>
-                    <a href="#">
+                    <a href="#" onclick="Signup_Modal()">
                         <i class="fas fa-user-plus"></i>
                         <span>Sign up</span>
                     </a>
+                    {% endif %}
                 </div>
             </nav>
             <div style=" justify-content: center; align-items: center; ">
@@ -176,26 +202,6 @@
 
             </div>
 
-
-            <!-- <div style=" display: flex; justify-content: center; align-items: center;" id="pic">
-
-
-
-                <div id="verification" hidden>
-                    <input type="file" id="fileInput2" name="file2">
-                    <button class="btn btn-outline-warning mr-2" onclick="VerifyFaces()">Verify faces</button>
-                </div>
-
-                <button class="btn btn-outline-success mr-2" onclick="detectFaces()">Detect faces</button>
-                <button class="btn btn-outline-success mr-2" onclick="detectEmotions()">Detect emotions</button>
-                <button class="btn btn-outline-success mr-2" onclick="detectMask()">Detect Mask</button>
-                <button class="btn btn-outline-success mr-2" onclick="">Detect Attributes</button>
-                <div class="btn btn-outline-success mr-2 disabled " style="opacity: 1;padding: inherit; ">
-
-                    <span style="margin :1em ;"> Face Verification</span> <input style="height:10px ;" type="checkbox" name="verif" data-toggle="toggle" data-onstyle="success" onchange="document.getElementById('verification').hidden=!(document.getElementById('verification').hidden);document.getElementById('verifImg').hidden=!(document.getElementById('verifImg').hidden)">
-                </div>
-
-            </div> -->
             <hr style="background-color: white;">
 
             <div>
@@ -212,14 +218,73 @@
                 </div>
 
             </div>
+            <!-- The Modal -->
+            <div id="id01" class="modal">
+                <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+
+                <!-- Modal Content -->
+                <form class="modal-content animate">
+                    <div class="imgcontainer">
+                        <!-- <img src="{% static 'face_API/img/1.jpg' %}" alt="Avatar" class="avatar"> -->
+                        <video id="webcam" autoplay playsinline></video>
+                        <canvas id="canvas" class="d-none"></canvas>
+
+                    </div>
+
+                    <div class="container">
+                        <label for="uname"><b>Username</b></label>
+                        <input type="text" placeholder="Enter Username" name="uname" id='username' required>
+
+                        <!-- <label for="psw"><b>Password</b></label>
+                        <input type="password" placeholder="Enter Password" name="psw" required> -->
+
+                        <button id="submit">Login</button>
+                    </div>
+
+
+                </form>
+            </div>
+
+            <!-- The signup Modal -->
+            <div id="id02" class="modal">
+                <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">&times;</span>
+
+                <!-- Modal Content -->
+                <form class="modal-content animate">
+                    <div class="imgcontainer">
+                        <!-- <img src="{% static 'face_API/img/1.jpg' %}" alt="Avatar" class="avatar"> -->
+                        <label for="files"><b>Select files:</b></label>
+                        <input type="file" id="files" name="files" multiple><br><br>
+                        <label for="profilepic"><b>Profile Picture</b></label>
+                        <input type="file" id='profilepic' name='profilepic'>
+                    </div>
+
+                    <div class="container">
+                        <label for="signup_username"><b>Username</b></label>
+
+                        <input type="text" placeholder="Enter Username" name="uname" id='signup_username' required>
+
+                        <label for="email"><b>Email</b></label>
+                        <input type="email" placeholder="Enter email" name="email" id='email' required>
+
+                        <!-- <label for="psw"><b>Password</b></label>
+                        <input type="password" placeholder="Enter Password" name="psw" required> -->
+
+                        <button id="signup">Sign up</button>
+                    </div>
+
+
+                </form>
+            </div>
 
 
 
-            <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
-            <script src=https://cdn.jsdelivr.net/npm/pretty-print-json@1.0/dist/pretty-print-json.min.js></script>
-            <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
-            <script src="{% static 'face_API/js/ajax.js' %}"></script>
     </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+    <script src=https://cdn.jsdelivr.net/npm/pretty-print-json@1.0/dist/pretty-print-json.min.js></script>
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+    <script src="{% static 'face_API/js/ajax.js' %}"></script>
+
 </body>
 
 

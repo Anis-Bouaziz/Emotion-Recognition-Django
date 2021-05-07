@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render , redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.http import JsonResponse,StreamingHttpResponse,HttpResponseServerError
@@ -7,7 +7,6 @@ import numpy as np
 import base64
 import json
 import requests
-#from api.camera import VideoCamera
 from django.views.decorators import gzip
 from django.conf import settings
 from django.template.defaultfilters import filesizeformat
@@ -18,14 +17,20 @@ from face_API.face.detection.model import RetinaFace
 from face_API.face.emotions.model import Xception
 from face_API.face.mask.model import Mask_detection
 from face_API.face.verification.model import FaceVerif
-
-
-
+from face_API.face.attributes.model import FaceAttributes
+from face_API.camera import VideoCamera
+import os
+from face_API.auth_backend import PasswordlessAuthBackend
+from django.contrib.auth import  login,logout
+from face_API.models import CustomUser, CustomUserManager
+import pickle
 #Load Models
 Retina=RetinaFace()
 emotion_classifier=Xception(Retina)
 mask_classifier=Mask_detection(Retina)
-verif= FaceVerif(Retina)   
+attributes_classifier=FaceAttributes(Retina)
+verif= FaceVerif(Retina) 
+
 
 
 def index(request):
@@ -103,6 +108,31 @@ def detect_mask(request):
     return JsonResponse(context, safe=False)
 
 @csrf_exempt
+def attributes(request):
+    if len(request.FILES)==0:
+        return HttpResponse(" Please Choose a file",status=404)
+    uploaded_file = request.FILES['file']
+    content_type = uploaded_file.content_type.split('/')[0]
+    if content_type in settings.UPLOAD_EXTENSIONS:
+        if uploaded_file.size > settings.MAX_CONTENT_LENGTH:
+            return HttpResponse(('Please keep filesize under %s. Current filesize %s') % (filesizeformat(settings.MAX_CONTENT_LENGTH), filesizeformat(uploaded_file.size)),status=500)
+    else:
+        return HttpResponse('File type is not supported',status=500)
+    pass
+    
+    img_raw = cv2.imdecode(np.fromstring(uploaded_file.read(),
+                                     np.uint8), cv2.IMREAD_UNCHANGED)
+    img=attributes_classifier.draw(img_raw)
+    img = image_resize(img_raw, width=600)
+    _, jpeg = cv2.imencode('.jpg', img)
+    img = base64.encodebytes(jpeg.tobytes())
+    json=attributes_classifier.json(img_raw)
+    
+    context = {'image': img.decode('utf-8'), 'json': json,'total':len(json)}
+
+    return JsonResponse(context, safe=False)
+
+@csrf_exempt
 def verifyFaces(request):
     if len(request.FILES)!=2:
             return HttpResponse(" Please Choose 2 Images",status=404)
@@ -138,32 +168,78 @@ def verifyFaces(request):
     context = {'image1': img1.decode('utf-8'),'image2':  img2.decode('utf-8'),'json':json}
     return JsonResponse(context, safe=False)
 
-
-
-
-
-
-
-###########################CAMERA#######################################
-def gen(camera):
+##########################Authentication################################
+@csrf_exempt
+def Facesignin(request):
+    images=[]
+    if len(request.FILES)!=7:
+        return HttpResponse('please upload 6 pictures and a profile picture',status=400)
+    for f in request.FILES.values():
+        images.append(cv2.imdecode(np.fromstring(f.read(),np.uint8), cv2.IMREAD_COLOR))
+    profilepic=request.FILES['Profilepicture']
+    username=request.POST['username']
+    email=request.POST['email']
+    try:
+        user = CustomUser.objects.get(username=username)
+        return HttpResponse('User already exists',status=302)
+    except CustomUser.DoesNotExist:
+        model=verif.createUserModel(images)
+        CustomUser.objects.create_user(email,username,model,profilepic)
+        return HttpResponse(200)
     
-    while camera.grabbed:
+    
+@csrf_exempt
+def Facelogin(request):
+    auth=PasswordlessAuthBackend()
+    img_raw = cv2.imdecode(np.fromstring(request.FILES['file'].read(),np.uint8), cv2.IMREAD_COLOR)
+    uname=request.POST['username']
+    user = auth.authenticate(username=uname)
+    
+    if user:
+        if int(verif.authenticate(img_raw,user.UserFile))==1:
+            login(request,user,'face_API.auth_backend.PasswordlessAuthBackend')
+            return HttpResponse('logged in ',status=200)
+        else:
+            return HttpResponse('Wrong user',status=401)
+    else: return HttpResponse('username not found',status=404)
         
+    
+    
+@csrf_exempt
+def Facelogout(request):
+    logout(request)
+    return redirect(index)
+###########################CAMERA#######################################
+os.environ['OPENCV_VIDEOIO_PRIORITY_MSMF'] = '0'
+def gen(camera):
+    while camera.grabbed:
         frame = camera.get_frame()
+        frame=cameramodel.draw(frame)
+        _, jpg = cv2.imencode('.jpg', frame)
         yield(b'--frame\r\n'
-        b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+        b'Content-Type: image/jpeg\r\n\r\n' + jpg .tobytes()+ b'\r\n\r\n')
     return HttpResponse(200)
 @csrf_exempt
 @gzip.gzip_page
 def camera(request): 
     camera=VideoCamera()
     if camera.video.isOpened():
-        
         return StreamingHttpResponse(gen(camera),content_type="multipart/x-mixed-replace;boundary=frame")
-         
     else : camera.video.release()
 @csrf_exempt 
 def OpenCamera(request):
+    global cameramodel
+    m = request.GET.get('mode')
+    if m=='1':
+        cameramodel=Retina
+    elif m=='2':
+        cameramodel=emotion_classifier
+    elif m=='3':
+        cameramodel=mask_classifier
+    elif m=='4': 
+        cameramodel=attributes_classifier
+    else : 
+        return HttpResponse(status=401)
     return render(request, 'face_API/camera.html')   
 @csrf_exempt  
 def CloseCamera(request):
