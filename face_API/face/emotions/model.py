@@ -6,24 +6,29 @@ from keras.models import load_model
 
 class Xception(object):
     def __init__(self,retina):
-        model_path="face_API/face/emotions/emotion.h5"
-        self.model= load_model(model_path, compile=False)
-        self.retina=retina
+        try:
+            model_path="face_API/face/emotions/emotion.h5"
+            self.model= load_model(model_path, compile=False)
+            self.retina=retina
+        except IOError as e:
+            raise e
     def __del__(self):
         del self.model
         del self.retina
     def predict(self,face):
         EMOTIONS = ["Angry", "Disgust", "Fear", "Happy", "Sad", "Surprise", "Neutral"]#fer
-        
-        roi = cv2.resize(face, (48, 48))
-        roi = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
-        roi = roi.astype("float") / 255.0
-        roi = img_to_array(roi)
-        roi = np.expand_dims(roi, axis=0)
-        preds = self.model.predict(roi)[0]
-        emotion_probability = np.max(preds)
-        label = EMOTIONS[preds.argmax()]
-        return label,emotion_probability
+        try:
+            roi = cv2.resize(face, (48, 48))
+            roi = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
+            roi = roi.astype("float") / 255.0
+            roi = img_to_array(roi)
+            roi = np.expand_dims(roi, axis=0)
+            preds = self.model.predict(roi)[0]
+            emotion_probability = np.max(preds)
+            label = EMOTIONS[preds.argmax()]
+            return label,emotion_probability
+        except Exception as e:
+            return 'None', 0.
     def draw(self,image):
         img_height, img_width, _ = image.shape
         faces=self.retina.predict(image)

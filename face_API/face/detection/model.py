@@ -1,11 +1,14 @@
 import cv2
 import numpy as np
 import tensorflow as tf
-
+from django.core.exceptions import *
 class RetinaFace(object):
     def __init__(self):
-        model_path="face_API/face/detection/retina_model" 
-        self.model=tf.saved_model.load(model_path, tags=None, options=None)
+        try:
+            model_path="face_API/face/detection/retina_model" 
+            self.model=tf.saved_model.load(model_path, tags=None, options=None)
+        except FileNotFoundError as f:
+            raise FileNotFoundError('file not found')
     def __del__(self):
         del self.model
     def predict(self,image):

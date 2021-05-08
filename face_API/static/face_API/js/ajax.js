@@ -262,16 +262,7 @@ function Modal() {
 
 function Signup_Modal() {
     document.getElementById('id02').style.display = 'block'
-        // if (navigator.mediaDevices.getUserMedia) {
-        //     navigator.mediaDevices.getUserMedia({ video: true })
-        //         .then(function(stream) {
-        //             video.srcObject = stream;
-        //         })
-        //         .catch(function(err0r) {
-        //             console.log("Something went wrong!");
-        //         });
 
-    // }
 }
 // Get the modal
 var modal = document.getElementById('id01');
@@ -287,10 +278,6 @@ window.onclick = function(event) {
     }
     if (event.target == modal2) {
         modal2.style.display = "none";
-        // stream = video.srcObject;
-        // stream.getTracks().forEach(function(track) {
-        //     track.stop();
-        // });
     }
 }
 $("#submit").click(function(e) {
@@ -321,13 +308,6 @@ $("#submit").click(function(e) {
         contentType: false,
         success: function(response) {
             location.reload()
-                // modal.style.display = "none";
-                // stream = video.srcObject;
-                // stream.getTracks().forEach(function(track) {
-                //     track.stop();
-                // });
-
-
         },
         error: function(jqXHR, textStatus, error) {
 
@@ -371,3 +351,11 @@ $("#signup").click(function(e) {
         }
     })
 })
+var $loading = $('#loading').hide();
+$(document)
+    .ajaxStart(function() {
+        $loading.show();
+    })
+    .ajaxStop(function() {
+        $loading.hide();
+    });

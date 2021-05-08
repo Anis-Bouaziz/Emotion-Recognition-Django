@@ -13,7 +13,9 @@
 
 </head>
 
+
 <body>
+    <div class="loading" id="loading">Loading&#8230;</div>
     <div class="page-wrapper chiller-theme toggled">
 
         <a id="show-sidebar" class="btn btn-sm btn-primary" href="#">
@@ -37,12 +39,16 @@
                             <span class="user-name">{{ user }}
                 
               </span>
-                            <span class="user-role">{{ user.email }}</span>
+                            <span class="user-role">{{ user.email }}</span> {% if user.is_authenticated %}
                             <span class="user-status">
                 <i class="fa fa-circle"></i>
                 <span>Online</span><br>
                             <span>Last Login: {{ user.last_login }}</span>
                             </span>
+                            {% else %}
+                            <span class="user-status-red">
+                                <i class="fa fa-circle"></i>
+                                <span>Offline</span><br> {% endif %}
                         </div>
                     </div>
                     <!-- sidebar-header  -->
@@ -280,6 +286,7 @@
 
 
     </div>
+
     <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
     <script src=https://cdn.jsdelivr.net/npm/pretty-print-json@1.0/dist/pretty-print-json.min.js></script>
     <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>

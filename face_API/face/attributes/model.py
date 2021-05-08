@@ -16,14 +16,17 @@ class FaceAttributes(object):
         del self.model
         del self.retina
     def predict(self,face):
-        x=cv2.resize(face,(224,224))
-        x = cv2.cvtColor(x, cv2.COLOR_BGR2RGB)
-        x = img_to_array(x) 
-        x = x.astype("float") / 255.0
-        x = np.expand_dims(x, axis=0)
-        preds=self.model.predict(x)[0]
-        res = { k:str(v)[:4]   for k, v in zip(self.attributes,preds) if v>0.5}
-        return res
+        try:
+            x=cv2.resize(face,(224,224))
+            x = cv2.cvtColor(x, cv2.COLOR_BGR2RGB)
+            x = img_to_array(x) 
+            x = x.astype("float") / 255.0
+            x = np.expand_dims(x, axis=0)
+            preds=self.model.predict(x)[0]
+            res = { k:str(v)[:4]   for k, v in zip(self.attributes,preds) if v>0.5}
+            return res
+        except Exception as e:
+            return {}
     def draw(self,image):
         img_height, img_width, _ = image.shape
         faces=self.retina.predict(image)

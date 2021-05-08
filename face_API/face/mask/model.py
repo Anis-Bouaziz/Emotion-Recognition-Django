@@ -7,23 +7,29 @@ from keras.models import load_model
 
 class Mask_detection(object):
     def __init__(self,retina):
-        model_path="face_API/face/mask/mask_detector.model"
-        self.model= load_model(model_path, compile=False)
-        self.retina=retina
+        try:
+            model_path="face_API/face/mask/mask_detector.model"
+            self.model= load_model(model_path, compile=False)
+            self.retina=retina
+        except IOError as e:
+            raise e
     def __del__(self):
         del self.model
         del self.retina
     def predict(self,face):
-        Masks = ["ON", "OFF"]
-        roi = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
-        roi = cv2.resize(roi, (224, 224))
-        roi = roi.astype("float") / 255.0
-        roi = img_to_array(roi)
-        roi = np.expand_dims(roi, axis=0)
-        preds = self.model.predict(roi)[0]
-        mask_probability = np.max(preds)
-        label = Masks[preds.argmax()]
-        return label,mask_probability
+        try:
+            Masks = ["ON", "OFF"]
+            roi = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
+            roi = cv2.resize(roi, (224, 224))
+            roi = roi.astype("float") / 255.0
+            roi = img_to_array(roi)
+            roi = np.expand_dims(roi, axis=0)
+            preds = self.model.predict(roi)[0]
+            mask_probability = np.max(preds)
+            label = Masks[preds.argmax()]
+            return label,mask_probability
+        except Exception as e:
+            return 'None',0.
     def draw(self,image):
         img_height, img_width, _ = image.shape
         faces=self.retina.predict(image)

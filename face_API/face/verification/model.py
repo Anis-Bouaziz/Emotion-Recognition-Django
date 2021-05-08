@@ -1,4 +1,5 @@
 import cv2
+from django.core.exceptions import *
 from scipy.spatial.distance import cosine
 from face_API.face.verification.vgg16 import RESNET50
 from tensorflow.keras.preprocessing.image import img_to_array
@@ -6,7 +7,6 @@ import numpy as np
 import pickle
 from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
-from numpy import load
 import os
 class FaceVerif(object):
     def __init__(self,retina):
@@ -14,8 +14,7 @@ class FaceVerif(object):
         self.model=RESNET50(include_top=False, input_tensor=None,
                         input_shape=(224, 224, 3), pooling='avg',
                         weights='vggface',
-                        classes=8631)
-        
+                        classes=8631)   
     def __del__(self):
         del self.retina
     def predict(self,face1,face2):
@@ -50,32 +49,38 @@ class FaceVerif(object):
             res.append({'error' :'each image must contain one face'})
         return res
     def createUserModel(self,images):
-        data = pickle.loads(open('face_API/face/verification/embeddings.pkl', "rb").read())
-        
-        for img in images:
-            img_height, img_width, _ = img.shape
-            face=self.retina.predict(img)
-            if len(face)==1:
-                face=face[0]
-                x1, y1, x2, y2 = int(face[0] * img_width), int(face[1] * img_height), \
-                            int(face[2] * img_width), int(face[3] * img_height)
-                emb=self.model.predict(preprocess_face(img[y1:y2, x1:x2]))
-                data['embeddings'].append(emb[0])
-                data['class']=np.append(data['class'],1)
-        xtrain ,xtest ,ytrain,ytest=train_test_split(np.asarray(data['embeddings']),np.asarray(data['class']),test_size=0.1)
-        recognizer = SVC(C=1.0, kernel="linear", probability=True)
-        recognizer.fit(xtrain, ytrain)
-        print(recognizer.score(xtest,ytest))
-        return pickle.dumps(recognizer)
-
+        try:
+            data = pickle.loads(open('face_API/face/verification/embeddings.pkl', "rb").read())
+        except IOError as e:
+            raise FileNotFoundError('Embeddings missing')
+        else:
+            for img in images:
+                img_height, img_width, _ = img.shape
+                face=self.retina.predict(img)
+                if len(face)==1:
+                    face=face[0]
+                    x1, y1, x2, y2 = int(face[0] * img_width), int(face[1] * img_height), \
+                                int(face[2] * img_width), int(face[3] * img_height)
+                    emb=self.model.predict(preprocess_face(img[y1:y2, x1:x2]))
+                    data['embeddings'].append(emb[0])
+                    data['class']=np.append(data['class'],1)
+            xtrain ,xtest ,ytrain,ytest=train_test_split(np.asarray(data['embeddings']),np.asarray(data['class']),test_size=0.1)
+            recognizer = SVC(C=1.0, kernel="linear", probability=True)
+            recognizer.fit(xtrain, ytrain)
+            print(recognizer.score(xtest,ytest))
+            return pickle.dumps(recognizer)
     def authenticate(self,image,usermodel):
         img_height, img_width, _ = image.shape
-        face=self.retina.predict(image)[0]
-        x1, y1, x2, y2 = int(face[0] * img_width), int(face[1] * img_height), \
-                            int(face[2] * img_width), int(face[3] * img_height)
-        embeddings=self.model.predict(preprocess_face(image[y1:y2, x1:x2]))
-        usermodel=pickle.loads(usermodel)
-        return usermodel.predict(embeddings)[0]
+        face=self.retina.predict(image)
+        if len(face)>1 or len (face)==0:
+            raise ValidationError('picture must contain one face') 
+        else:
+            face=face[0]
+            x1, y1, x2, y2 = int(face[0] * img_width), int(face[1] * img_height), \
+                                int(face[2] * img_width), int(face[3] * img_height)
+            embeddings=self.model.predict(preprocess_face(image[y1:y2, x1:x2]))
+            usermodel=pickle.loads(usermodel)
+            return usermodel.predict(embeddings)[0]
     def create_dataset(self):
         rootdir = 'face_API/face/verification/archive/train'
         data=[]
@@ -109,12 +114,15 @@ class FaceVerif(object):
             
             
 def preprocess_face(face):
-    face=cv2.resize(face,(224,224))
-    face = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
-    face = img_to_array(face)
-    face = face[..., ::-1]
-    face[..., 0] -= 91.4953
-    face[..., 1] -= 103.8827
-    face[..., 2] -= 131.0912
-    face = np.expand_dims(face, axis=0)
-    return face
+    try:
+        face=cv2.resize(face,(224,224))
+        face = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
+        face = img_to_array(face)
+        face = face[..., ::-1]
+        face[..., 0] -= 91.4953
+        face[..., 1] -= 103.8827
+        face[..., 2] -= 131.0912
+        face = np.expand_dims(face, axis=0)
+        return face
+    except Exception as e:
+        return np.zeros((224,224,3))
