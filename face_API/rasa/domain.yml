@@ -1,0 +1,103 @@
+version: "2.0"
+
+intents:
+  - greet
+  - goodbye
+  - affirm
+  - deny
+  - mood_great
+  - mood_unhappy
+  - bot_challenge
+  - main_menu
+  - no_thank_you
+  - Face Verification
+  - Emotion Detection
+  - Detect Attributes
+  - Our application
+  - Perfect
+  - Good
+  - Intermediary
+  - Mediocre
+  - Horrible
+  - out_of_scope
+  - who_are_U
+
+
+responses:
+  
+
+  utter_goodbye:
+  - text: "Bye"
+  utter_application:
+  - text: "Our application can detect, identify, and analyze faces in images and videos authenticate people for access, 
+  count people in a space for crowd control, or garner crowd insights for media campaigns.
+  Click on upload picture then choose"
+  utter_Face_Verification:
+  - image: https://miro.medium.com/max/875/1*0v9b5XhG0lXlLHQbi3smZQ.jpeg
+    text: "It's simple you Upload a picture then our application will tell you 
+      Check the likelihood that two faces belong to the same person and give you a confidence score "
+  utter_Emotion_Detection:
+  - image: https://miro.medium.com/max/2112/1*rSOC2rIKZ3NSkE3j1MetdQ.png
+    text: "Our application detect perceived facial expressions such as anger, contempt, disgust, fear, happiness, neutral, sadness, and surprise. It is important to note that 
+  facial expressions alone do not represent the internal states of people"
+  utter_Detect_Attributes:
+  - image: https://developer.huawei.com/Enexport/sites/default/images/en/Develop/AI/face-attributes/face-attributesimage.jpg
+    text: "Our Detect one or more human faces along with attributes such as: age, emotion, pose, smile, and facial hair, including 27 landmarks for each face in the image."
+  utter_response_usage:
+  - text: "Upload picture then choose the model you want to use then will get a json response long with "
+  utter_welcome_message:
+  - quick_replies:
+    - payload: Face Verification
+      title: 👥 Face Verification
+    - payload: Emotion Detection
+      title: 🥴 Emotion Detection
+    - payload: Detect Attributes
+      title: 😎 Detect Attributes
+    - payload: Our application
+      title: 🖥️ Our application
+    text: "I am a bot my name is Zara , powered by Face recognition application \
+      \  \n  What do you want ?  "
+  utter_welcome_message2:
+  - quick_replies:
+    - payload: Face Verification
+      title: 👥 Face Verification
+    - payload: Emotion Detection
+      title: 🥴 Emotion Detection
+    - payload: Detect Attributes
+      title: 😎 Detect Attributes
+    - payload: Our application
+      title: 🖥️ Our application
+    text: "Any other help?\n  "
+  utter_feedback:
+  - quick_replies:
+    - payload: ⭐⭐⭐⭐⭐
+      title: ⭐⭐⭐⭐⭐ Perfect
+    - payload: ⭐⭐⭐⭐
+      title: ⭐⭐⭐⭐ Good
+    - payload: ⭐⭐⭐
+      title: ⭐⭐⭐ Intermediary
+    - payload: ⭐⭐
+      title: ⭐⭐ Mediocre
+    - payload: ⭐
+      title: ⭐ Horrible
+    text: "What do you think about our appliction ? \n  "
+  utter_Parfait:
+  - text: Oh thank you very much, that's kind of you ❤️ ❤️ ❤️
+  utter_Moyen:
+  - text: Oh thank you  ❤️ ❤️
+  utter_Bien:
+  - text: Thanks i will do my best next time ...
+  utter_Mediocre:
+  - text: Thanks i will do my best next time ...
+  utter_Horrible:
+  - text: It is noted thank you for your feedback
+  utter_no_thank_you:
+  - text: Thank you for the visit see you soon 👏👏
+  utter_out_of_scope:
+  - text: Sorry, I can't handle that request.
+  utter_who_are_U:
+  - text: "I am a bot my name is Zara , powered by Face recognition application"
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true

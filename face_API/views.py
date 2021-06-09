@@ -145,7 +145,7 @@ def Facesignin(request):
         return HttpResponse('please upload 6 pictures and a profile picture',status=400)
     for f in request.FILES.values():
         try:
-            validate(uploaded_file2)
+            validate(f)
         except ValidationError as v: 
             return HttpResponse(v,400)
         else :
@@ -188,11 +188,14 @@ def Facelogout(request):
     return redirect(index)
 ###########################CAMERA#######################################
 os.environ['OPENCV_VIDEOIO_PRIORITY_MSMF'] = '0'
+
 def gen(camera):
+    img_array = []
     while camera.grabbed:
         frame = camera.get_frame()
         frame=cameramodel.draw(frame)
         _, jpg = cv2.imencode('.jpg', frame)
+        img_array.append(jpg)
         yield(b'--frame\r\n'
         b'Content-Type: image/jpeg\r\n\r\n' + jpg .tobytes()+ b'\r\n\r\n')
     return HttpResponse(200)

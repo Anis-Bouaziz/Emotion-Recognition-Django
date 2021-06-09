@@ -7,291 +7,325 @@
     <link href="https://use.fontawesome.com/releases/v5.14.0/css/all.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
     <link rel=stylesheet href=https://cdn.jsdelivr.net/npm/pretty-print-json@1.0/dist/pretty-print-json.css>
-    <link rel="stylesheet" href="{% static 'face_API/css/style.css' %}" />
+
     <link rel="shortcut icon" href="{% static 'face_API/favicon.ico' %}" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'face_API/css/style.css' %}" />
+
 
 </head>
 
 
 <body>
     <div class="loading" id="loading">Loading&#8230;</div>
-    <div class="page-wrapper chiller-theme toggled">
+    <div class="page-wrapper chiller-theme toggled" style="margin-left: 270px;">
 
-        <a id="show-sidebar" class="btn btn-sm btn-primary" href="#">
-            <i class="fas fa-bars"></i>
-            <nav id="sidebar" class="sidebar-wrapper">
-                <div class="sidebar-content">
-                    <div class="sidebar-brand">
-                        <a href="#">FACE API</a>
-                        <div id="close-sidebar">
+        <!-- <a id="show-sidebar" class="btn btn-sm btn-primary" href="#"> -->
+        <nav id="sidebar" class="sidebar-wrapper">
+            <div class="sidebar-content">
+                <!-- <div class="sidebar-brand">
+                    <a href="#">FACE Analysis API</a>
+                    <div id="close-sidebar">
                             <i class="fas fa-times"></i>
                         </div>
-                    </div>
-                    <div class="sidebar-header">
-                        <div class="user-pic">
-                            {% if user.is_authenticated %}
-                            <img class="img-responsive img-rounded" id='userpic' src="{{ user.profilePic.url }}" alt="User picture"> {% else %}
+                </div> -->
+                <div class="sidebar-header">
+                    <div class="user-pic">
+                        {% if user.is_authenticated %}
+                        <img class="img-responsive img-rounded" id='userpic' src="{{ user.profilePic.url }}" alt="User picture"> {% else %}
 
-                            <img class="img-responsive img-rounded" id='userpic' src="https://raw.githubusercontent.com/azouaoui-med/pro-sidebar-template/gh-pages/src/img/user.jpg" alt="User picture"> {% endif %}
-                        </div>
-                        <div class="user-info">
-                            <span class="user-name">{{ user }}
+                        <img class="img-responsive img-rounded" id='userpic' src="{% static 'face_API/img/user.jpg' %}" alt="User picture"> {% endif %}
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name">{{ user }}
                 
               </span>
-                            <span class="user-role">{{ user.email }}</span> {% if user.is_authenticated %}
-                            <span class="user-status">
+                        <span class="user-role">{{ user.email }}</span> {% if user.is_authenticated %}
+                        <span class="user-status">
                 <i class="fa fa-circle"></i>
                 <span>Online</span><br>
-                            <span>Last Login: {{ user.last_login }}</span>
-                            </span>
-                            {% else %}
-                            <span class="user-status-red">
+                        <span>Last Login: {{ user.last_login }}</span>
+                        </span>
+                        {% else %}
+                        <span class="user-status-red">
                                 <i class="fa fa-circle"></i>
                                 <span>Offline</span><br> {% endif %}
-                        </div>
                     </div>
-                    <!-- sidebar-header  -->
-
-                    <div class="sidebar-menu">
-                        <ul>
-                            <li class="header-menu">
-                                <span>API</span>
-                            </li>
-                            <li>
-                                <a href="#" onclick="document.getElementById('fileInput').click()">
-                                    <i class="fa fa-upload"></i>
-                                    <span>Upload Image</span>
-                                    <input type="file" id="fileInput" name="file" style="display: none;">
-
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" onclick="detectFaces()">
-                                    <i class="fa fa-users"></i>
-                                    <span>Detect Faces</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" onclick="detectEmotions()">
-                                    <i class="fa fa-smile"></i>
-                                    <span>Detect Emotions</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" onclick="detectMask()">
-                                    <i class="fas fa-head-side-mask"></i>
-                                    <span>Detect Masks</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" onclick="detectAttributes()">
-                                    <i class="fas fa-address-card"></i>
-                                    <span>Detect Attributes</span>
-                                </a>
-                            </li>
-                            <li class="sidebar-dropdown">
-                                <a href="#">
-                                    <i class="fas fa-user-check"></i>
-                                    <span>Verify two faces</span>
-                                </a>
-                                <div class="sidebar-submenu">
-                                    <ul>
-                                        <li>
-                                            <a href="#" onclick="document.getElementById('fileInput2').click()">
-
-                                                <span>Upload second Image</span>
-                                                <input type="file" id="fileInput2" name="file2" style="display: none;"></a>
-                                        </li>
-                                        <li>
-                                            <a href="#" onclick="VerifyFaces()">
-
-                                                <span>Verify</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="header-menu">
-                                <span>Extra</span>
-                            </li>
-                            <li class="sidebar-dropdown">
-                                <a href="#">
-                                    <i class="fas fa-video"></i>
-                                    <span>WebCam</span>
-                                    <span class="badge badge-pill badge-primary">Beta</span>
-
-                                </a>
-                                <div class="sidebar-submenu">
-                                    <ul>
-                                        <li>
-                                            <a href="#" target="popup" onclick="window.open('OpenCamera/?mode=1','popup','width=640,height=480,left=400,top=400');return false;">
-
-                                                <span>Face detection</span></a>
-                                        </li>
-                                        <li>
-                                            <a href="#" target="popup" onclick="window.open('OpenCamera/?mode=2','popup','width=640,height=480,left=400,top=400');return false;">
-
-                                                <span>Emotion Recognition</span></a>
-                                        </li>
-                                        <li>
-                                            <a href="#" target="popup" onclick="window.open('OpenCamera/?mode=3','popup','width=640,height=480,left=400,top=400');return false;">
-
-                                                <span>Mask detection</span></a>
-                                        </li>
-                                        <li>
-                                            <a href="#" target="popup" onclick="window.open('OpenCamera/?mode=4','popup','width=640,height=480,left=400,top=400');return false;">
-
-                                                <span>Attribute detection</span></a>
-                                        </li>
-
-                                    </ul>
-                                </div>
-                            </li>
-                            <li>
-                                <a href="https://github.com/Anis-Bouaziz/Face-API-Django" target="_blank">
-                                    <i class="fa fa-book"></i>
-                                    <span>Documentation</span>
-
-                                </a>
-                            </li>
-                            <li class="sidebar-dropdown">
-                                <a href="#">
-                                    <i class="fa fa-folder"></i>
-                                    <span>Examples</span>
-                                </a>
-                                <div class="sidebar-submenu">
-                                    <ul>
-                                        <li style="margin-bottom:10px;">
-                                            <img src="{% static 'face_API/img/1.jpg' %}" style="width:100px; cursor:pointer;" onclick="document.getElementById('canvasOutput').src=this.src;document.getElementById('imgsource1').src=this.src">
-                                        </li>
-                                        <li style="margin-bottom:10px;">
-                                            <img src="{% static 'face_API/img/2.jpg' %}" style="width:100px;cursor:pointer;" onclick="document.getElementById('canvasOutput').src=this.src;document.getElementById('imgsource1').src=this.src">
-                                        </li>
-
-                                        <li>
-                                            <img src="{% static 'face_API/img/3.jpg' %}" style="width:100px;cursor:pointer;" onclick="document.getElementById('canvasOutput').src=this.src;document.getElementById('imgsource1').src=this.src">
-                                        </li>
-
-
-                                    </ul>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- sidebar-menu  -->
                 </div>
-                <!-- sidebar-content  -->
-                <div class="sidebar-footer">
+                <!-- sidebar-header  -->
 
-                    {% if user.is_authenticated %}
-                    <a href="{% url 'Facelogout' %}" id='signout'>
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>Sign out</span>
-                    </a>
-                    {% else %}
+                <div class="sidebar-menu">
+                    <ul>
+                        <li class="header-menu">
+                            <span>API</span>
+                        </li>
+                        <li>
+                            <a href="#" onclick="document.getElementById('fileInput').click()">
+                                <i class="fa fa-upload"></i>
+                                <span>Upload Image</span>
+                                <input type="file" id="fileInput" name="file" style="display: none;">
 
-                    <a href="#" onclick="Modal()" id='signin'>
-                        <i class="fas fa-sign-in-alt"></i>
-                        <span>Sign in</span>
-                    </a>
-                    <a href="#" onclick="Signup_Modal()">
-                        <i class="fas fa-user-plus"></i>
-                        <span>Sign up</span>
-                    </a>
-                    {% endif %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="detectFaces()">
+                                <i class="fa fa-users"></i>
+                                <span>Detect Faces</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="detectEmotions()">
+                                <i class="fa fa-smile"></i>
+                                <span>Detect Emotions</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="detectMask()">
+                                <i class="fas fa-head-side-mask"></i>
+                                <span>Detect Masks</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="detectAttributes()">
+                                <i class="fas fa-address-card"></i>
+                                <span>Detect Attributes</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-dropdown">
+                            <a href="#">
+                                <i class="fas fa-user-check"></i>
+                                <span>Verify two faces</span>
+                            </a>
+                            <div class="sidebar-submenu">
+                                <ul>
+                                    <li>
+                                        <a href="#" onclick="document.getElementById('fileInput2').click()">
+
+                                            <span>Upload second Image</span>
+                                            <input type="file" id="fileInput2" name="file2" style="display: none;"></a>
+                                    </li>
+                                    <li>
+                                        <a href="#" onclick="VerifyFaces()">
+
+                                            <span>Verify</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="header-menu">
+                            <span>Extra</span>
+                        </li>
+                        <li class="sidebar-dropdown">
+                            <a href="#">
+                                <i class="fas fa-video"></i>
+                                <span>WebCam</span>
+                                <span class="badge badge-pill badge-primary">Beta</span>
+
+                            </a>
+                            <div class="sidebar-submenu">
+                                <ul>
+                                    <li>
+                                        <a href="#" target="popup" onclick="window.open('OpenCamera/?mode=1','popup','width=640,height=480,left=400,top=400');return false;">
+
+                                            <span>Face detection</span></a>
+                                    </li>
+                                    <li>
+                                        <a href="#" target="popup" onclick="window.open('OpenCamera/?mode=2','popup','width=640,height=480,left=400,top=400');return false;">
+
+                                            <span>Emotion Recognition</span></a>
+                                    </li>
+                                    <li>
+                                        <a href="#" target="popup" onclick="window.open('OpenCamera/?mode=3','popup','width=640,height=480,left=400,top=400');return false;">
+
+                                            <span>Mask detection</span></a>
+                                    </li>
+                                    <li>
+                                        <a href="#" target="popup" onclick="window.open('OpenCamera/?mode=4','popup','width=640,height=480,left=400,top=400');return false;">
+
+                                            <span>Attribute detection</span></a>
+                                    </li>
+
+                                </ul>
+                            </div>
+                        </li>
+                        <li>
+                            <a href="https://github.com/Anis-Bouaziz/Face-API-Django" target="_blank">
+                                <i class="fa fa-book"></i>
+                                <span>Documentation</span>
+
+                            </a>
+                        </li>
+                        <li class="sidebar-dropdown">
+                            <a href="#">
+                                <i class="fa fa-folder"></i>
+                                <span>Examples</span>
+                            </a>
+                            <div class="sidebar-submenu">
+                                <ul>
+                                    <li style="margin-bottom:10px;">
+                                        <img src="{% static 'face_API/img/1.jpg' %}" style="width:100px; cursor:pointer;" onclick="document.getElementById('canvasOutput').src=this.src;document.getElementById('imgsource1').src=this.src">
+                                    </li>
+                                    <li style="margin-bottom:10px;">
+                                        <img src="{% static 'face_API/img/2.jpg' %}" style="width:100px;cursor:pointer;" onclick="document.getElementById('canvasOutput').src=this.src;document.getElementById('imgsource1').src=this.src">
+                                    </li>
+
+                                    <li>
+                                        <img src="{% static 'face_API/img/3.jpg' %}" style="width:100px;cursor:pointer;" onclick="document.getElementById('canvasOutput').src=this.src;document.getElementById('imgsource1').src=this.src">
+                                    </li>
+
+
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
-            </nav>
-            <div style=" justify-content: center; align-items: center; ">
-
-                <h1>Face API Demo</h1>
-
+                <!-- sidebar-menu  -->
             </div>
+            <!-- sidebar-content  -->
+            <div class="sidebar-footer">
 
-            <hr style="background-color: white;">
+                {% if user.is_authenticated %}
+                <a href="{% url 'Facelogout' %}" id='signout'>
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sign out</span>
+                </a>
+                {% else %}
 
-            <div>
-                <div style="display:flex ;flex-wrap: wrap; align-items:flex-start; align-content:flex-start; gap: 50px;" id="b">
+                <a href="#" onclick="Modal()" id='signin'>
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Sign in</span>
+                </a>
+                <a href="#" onclick="Signup_Modal()">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Sign up</span>
+                </a>
+                {% endif %}
+            </div>
+        </nav>
+        <div style="display: flex; width: 100%; ">
 
+            <h1>Face Analysis API</h1>
+            <div style=" display: flex;flex: 1; justify-content: flex-end;gap: 20px;">
+                <img src=" {% static 'face_API/img/esprit.png' %} " height="70px">
+                <img src=" {% static 'face_API/img/e.png' %} " height="70px">
+                <img src=" {% static 'face_API/img/g.png' %} " height="70px"></div>
+
+        </div>
+
+        <hr style="border: 1px solid #3a3f48">
+
+        <div>
+            <div style="display:flex ;flex-wrap: wrap; align-items:flex-start; align-content:flex-start; gap: 50px;" id="b">
+                <div style="display: flex; flex-direction: column;">
                     <img id="canvasOutput" src="" style="width:600px;">
                     <img id="imgsource1" hidden>
                     <img id="verifImg" src="" style="max-width:600px;">
                     <img id="imgsource2" hidden>
-                    <pre id="pre" style="height: 500px;;width:40%; overflow: auto; background-color: white; padding: 10px;" hidden><code  id="code" ></code></pre>
+                </div>
+
+                <pre id="pre" style="height: 500px;;width:40%; overflow: auto; background-color: white; padding: 10px;" hidden><code  id="code" ></code></pre>
 
 
+
+            </div>
+
+        </div>
+        <!-- The Modal -->
+        <div id="id01" class="modal">
+            <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+
+            <!-- Modal Content -->
+            <form class="modal-content animate">
+                <div class="imgcontainer">
+                    <!-- <img src="{% static 'face_API/img/1.jpg' %}" alt="Avatar" class="avatar"> -->
+                    <video id="webcam" autoplay playsinline></video>
+                    <canvas id="canvas" class="d-none"></canvas>
 
                 </div>
 
-            </div>
-            <!-- The Modal -->
-            <div id="id01" class="modal">
-                <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+                <div class="container">
+                    <label for="uname"><b>Username</b></label>
+                    <input type="text" placeholder="Enter Username" name="uname" id='username' required>
 
-                <!-- Modal Content -->
-                <form class="modal-content animate">
-                    <div class="imgcontainer">
-                        <!-- <img src="{% static 'face_API/img/1.jpg' %}" alt="Avatar" class="avatar"> -->
-                        <video id="webcam" autoplay playsinline></video>
-                        <canvas id="canvas" class="d-none"></canvas>
-
-                    </div>
-
-                    <div class="container">
-                        <label for="uname"><b>Username</b></label>
-                        <input type="text" placeholder="Enter Username" name="uname" id='username' required>
-
-                        <!-- <label for="psw"><b>Password</b></label>
+                    <!-- <label for="psw"><b>Password</b></label>
                         <input type="password" placeholder="Enter Password" name="psw" required> -->
 
-                        <button id="submit">Login</button>
+                    <button id="submit">Login</button>
+                </div>
+
+
+            </form>
+        </div>
+
+        <!-- The signup Modal -->
+        <div id="id02" class="modal">
+            <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">&times;</span>
+
+            <!-- Modal Content -->
+            <form class="modal-content animate">
+                <div style="align-self: center; text-align: center; padding-top: 20px;">
+
+
+                    <div style="margin-bottom: 10px;">
+
+
+                        <div style="display: flex; align-items: center; gap: 5px; margin-top: 10px;" id="modelpicscontainer"><img class="img-responsive img-rounded" style="width: 80px;" src="{% static 'face_API/img/user.jpg' %}" alt="User picture">
+                            <img class="img-responsive img-rounded" style="width: 80px;" src="{% static 'face_API/img/user.jpg' %}" alt="User picture">
+                            <img class="img-responsive img-rounded" style="width: 80px;" src="{% static 'face_API/img/user.jpg' %}" alt="User picture">
+                            <img class="img-responsive img-rounded" style="width: 80px;" src="{% static 'face_API/img/user.jpg' %}" alt="User picture">
+                            <img class="img-responsive img-rounded" style="width: 80px;" src="{% static 'face_API/img/user.jpg' %}" alt="User picture">
+                            <img class="img-responsive img-rounded" style="width: 80px;" src="{% static 'face_API/img/user.jpg' %}" alt="User picture"></div>
+
                     </div>
+                    <a href="#" onclick="document.getElementById('modelpics').click()" class="btn btn-primary">
+                        <i class="fa fa-upload"></i>
+                        <span>Upload 6 Images</span>
+                        <input type="file" id="modelpics" name="files" multiple style="display: none;">
 
+                    </a>
+                    <div>
 
-                </form>
-            </div>
-
-            <!-- The signup Modal -->
-            <div id="id02" class="modal">
-                <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">&times;</span>
-
-                <!-- Modal Content -->
-                <form class="modal-content animate">
-                    <div class="imgcontainer">
-                        <!-- <img src="{% static 'face_API/img/1.jpg' %}" alt="Avatar" class="avatar"> -->
-                        <label for="files"><b>Select files:</b></label>
-                        <input type="file" id="files" name="files" multiple><br><br>
-                        <label for="profilepic"><b>Profile Picture</b></label>
-                        <input type="file" id='profilepic' name='profilepic'>
+                        <div style="display: flex; align-items: center; justify-content: center; margin-top: 10px;margin-bottom: 10px;">
+                            <img class="img-responsive img-rounded" style="width: 80px;" id='userpic1' src="{% static 'face_API/img/user.jpg' %}" alt="User picture"></div>
+                        <a href="#" onclick="document.getElementById('profilepicture').click()" class="btn btn-primary">
+                            <i class="fa fa-upload"></i>
+                            <span>Upload Profile picture</span>
+                            <input type="file" id='profilepicture' style="display: none;">
+                        </a>
                     </div>
+                </div>
 
-                    <div class="container">
-                        <label for="signup_username"><b>Username</b></label>
+                <div class="container">
+                    <label for="signup_username"><b>Username</b></label>
 
-                        <input type="text" placeholder="Enter Username" name="uname" id='signup_username' required>
+                    <input type="text" placeholder="Enter Username" name="uname" id='signup_username' required>
 
-                        <label for="email"><b>Email</b></label>
-                        <input type="email" placeholder="Enter email" name="email" id='email' required>
+                    <label for="email"><b>Email</b></label>
+                    <input type="email" placeholder="Enter email" name="email" id='email' required>
 
-                        <!-- <label for="psw"><b>Password</b></label>
+                    <!-- <label for="psw"><b>Password</b></label>
                         <input type="password" placeholder="Enter Password" name="psw" required> -->
 
-                        <button id="signup">Sign up</button>
-                    </div>
+                    <button id="signup">Sign up</button>
+                </div>
 
 
-                </form>
-            </div>
+            </form>
+        </div>
 
 
 
     </div>
-
+    <div class="chat-container" style="right: 0; bottom: 0;  width: 20%; position: fixed;"></div>
+    <script src="https://npm-scalableminds.s3.eu-central-1.amazonaws.com/@scalableminds/chatroom@master/dist/Chatroom.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
     <script src=https://cdn.jsdelivr.net/npm/pretty-print-json@1.0/dist/pretty-print-json.min.js></script>
     <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
     <script src="{% static 'face_API/js/ajax.js' %}"></script>
 
+    <script type="text/javascript">
+    </script>
 </body>
 
 

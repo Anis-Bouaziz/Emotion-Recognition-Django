@@ -1,6 +1,5 @@
 let inputElement = document.getElementById('fileInput');
 let inputElement2 = document.getElementById('fileInput2');
-let imgElement = new Image();
 let canvas = document.getElementById('canvasOutput');
 let code = document.getElementById('code');
 let pre = document.getElementById('pre');
@@ -10,7 +9,9 @@ let viddiv = document.getElementById('viddiv')
 let verifImg = document.getElementById('verifImg')
 let imgsource1 = document.getElementById('imgsource1')
 let imgsource2 = document.getElementById('imgsource2')
-
+let modelpics = document.getElementById('modelpics')
+let profilepicture = document.getElementById('profilepicture')
+let userpic = document.getElementById('userpic1')
 inputElement.addEventListener('change', (e) => {
 
     canvas.src = URL.createObjectURL(e.target.files[0]);
@@ -23,8 +24,28 @@ inputElement2.addEventListener('change', (e) => {
     imgsource2.src = URL.createObjectURL(e.target.files[0]);
     verifImg.hidden = false
 }, false);
+modelpics.addEventListener('change', (e) => {
+    if (e.target.files.length != 6) {
+        alert('Please upload 6 pictures')
+
+    } else {
+        $('#modelpicscontainer').children().each((index, element) => {
+            console.log(index)
+            element.src = URL.createObjectURL(e.target.files[index]);
+        });
+    }
+
+
+
+}, false);
+profilepicture.addEventListener('change', (e) => {
+
+    userpic.src = URL.createObjectURL(e.target.files[0]);
+
+}, false);
 
 async function detectEmotions() {
+    verifImg.src = ""
     var img = await fetch(imgsource1.src)
     var blob = await img.blob()
     var file = await new File([blob], 'ex.jpg', blob)
@@ -54,6 +75,7 @@ async function detectEmotions() {
 }
 
 async function detectMask() {
+    verifImg.src = ""
     var img = await fetch(imgsource1.src)
     var blob = await img.blob()
     var file = await new File([blob], 'ex.jpg', blob)
@@ -82,6 +104,7 @@ async function detectMask() {
     })
 }
 async function detectAttributes() {
+    verifImg.src = ""
     var img = await fetch(imgsource1.src)
     var blob = await img.blob()
     var file = await new File([blob], 'ex.jpg', blob)
@@ -111,6 +134,7 @@ async function detectAttributes() {
 }
 
 async function detectFaces() {
+    verifImg.src = ""
     var img = await fetch(imgsource1.src)
     var blob = await img.blob()
     var file = await new File([blob], 'ex.jpg', blob)
@@ -137,33 +161,6 @@ async function detectFaces() {
         }
     })
 
-}
-
-function camera(param) {
-
-    var check = new FormData();
-    if (param.checked) {
-        vid.src = "/face_API/camera"
-        viddiv.hidden = false
-        pic.hidden = true
-
-    } else {
-        check.append('cam', 0)
-        $.ajax({
-            type: 'POST',
-            url: '/face_API/CloseCamera',
-            data: check,
-            dataType: "json",
-            processData: false,
-            contentType: false,
-
-            success: function(response) {
-                vid.src = "#"
-                pic.hidden = false
-            },
-            error: console.log("error")
-        })
-    }
 }
 
 async function VerifyFaces() {
@@ -319,8 +316,8 @@ $("#submit").click(function(e) {
 
 $("#signup").click(function(e) {
     e.preventDefault()
-    var files = document.getElementById('files').files
-    var profilepic = document.getElementById('profilepic').files[0]
+    var files = document.getElementById('modelpics').files
+    var profilepic = document.getElementById('profilepicture').files[0]
     var formdata = new FormData();
 
     for (let i = 0; i < files.length; i++) {
@@ -359,3 +356,13 @@ $(document)
     .ajaxStop(function() {
         $loading.hide();
     });
+/*****************************************************/
+var chatroom = new window.Chatroom({
+    host: "http://localhost:5005",
+    title: "Chat with Zara",
+    container: document.querySelector(".chat-container"),
+    welcomeMessage: "Hi, I am Zara. How may I help you?",
+    speechRecognition: "en-US",
+    voiceLang: "en-US"
+});
+chatroom.openChat();

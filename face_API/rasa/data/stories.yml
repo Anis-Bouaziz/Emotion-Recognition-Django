@@ -1,0 +1,94 @@
+version: "2.0"
+
+stories:
+
+
+- story: welcome
+  steps:
+  - intent: greet
+  - action: utter_welcome_message
+  - intent: main_menu
+  - action: utter_welcome_message2
+
+- story: no thank you
+  steps:
+  - intent: no_thank_you
+  - action: utter_no_thank_you
+  - action: utter_feedback
+
+- story: who_are_U
+  steps:
+  - intent: who_are_U
+  - action: utter_welcome_message
+
+
+- story: Our application
+  steps:
+  - intent: Our application
+  - action: utter_application
+  - action: utter_welcome_message2
+
+- story: Detect Attributes
+  steps:
+  - intent: Detect Attributes
+  - action: utter_Detect_Attributes
+  - action: utter_welcome_message2
+
+- story: Emotion Detection
+  steps:
+  - intent: Emotion Detection
+  - action: utter_Emotion_Detection
+  - action: utter_welcome_message2
+
+- story: Face Verification
+  steps:
+  - intent: Face Verification
+  - action: utter_Face_Verification
+  - action: utter_welcome_message2
+
+- story: Face Verification
+  steps:
+  - intent: Face Verification
+  - action: utter_Face_Verification
+  - action: utter_welcome_message2
+
+- story: Parfait
+  steps:
+  - intent: Perfect
+  - action: utter_Parfait
+
+- story: Bien
+  steps:
+  - intent: Good
+  - action: utter_Bien
+
+- story: Moyen
+  steps:
+  - intent: Intermediary
+  - action: utter_Moyen
+
+- story: Mediocre
+  steps:
+  - intent: Mediocre
+  - action: utter_Mediocre
+
+- story: Horrible
+  steps:
+  - intent: Horrible
+  - action: utter_Horrible
+
+- story: bye
+  steps:
+  - intent: goodbye
+  - action: utter_no_thank_you
+  - action: utter_feedback
+
+- story: out-of-scope
+  steps:
+  - intent: out_of_scope
+  - action: utter_out_of_scope
+
+
+
+
+
